@@ -1,13 +1,9 @@
 
-<div align="center"><h1>使用 CUDA C/C++ 加速应用程序</h1></div>
-
-![CUDA](./images/CUDA_Logo.jpg)
+# 使用 CUDA C/C++ 加速应用程序
 
 加速计算正在取代 CPU 计算，成为最佳计算做法。加速计算带来的层出不穷的突破性进展、对加速应用程序日益增长的需求、轻松编写加速计算的编程规范以及支持加速计算的硬件的不断改进，所有这一切都在推动计算方式必然会过渡到加速计算。
 
-无论是从出色的性能还是易用性来看，[CUDA](https://developer.nvidia.com/about-cuda) 计算平台均是加速计算的制胜法宝。CUDA 提供一种可扩展 C、C++、Python 和 Fortran 等语言的编码范式，能够在世界上性能超强劲的并行处理器 NVIDIA GPU 上运行大量经加速的并行代码。CUDA 可以毫不费力地大幅加速应用程序，具有适用于 [DNN](https://developer.nvidia.com/cudnn)、[BLAS](https://developer.nvidia.com/cublas)、[图形分析](https://developer.nvidia.com/nvgraph) 和 [FFT](https://developer.nvidia.com/cufft) 等的高度优化库生态系统，并且还附带功能强大的 [命令行](http://docs.nvidia.com/cuda/profiler-users-guide/index.html#nvprof-overview) 和 [可视化分析器] (http://docs.nvidia.com/cuda/profiler-users-guide/index.html#visual)。
-
-CUDA 支持以下领域的许多（即便不是大多数）[世界上性能超强劲的应用程序](https://www.nvidia.com/en-us/data-center/gpu-accelerated-applications/catalog/?product_category_id=58,59,60,293,98,172,223,227,228,265,487,488,114,389,220,258,461&search=)：[计算流体动力学](https://www.nvidia.com/en-us/data-center/gpu-accelerated-applications/catalog/?product_category_id=10,12,16,17,19,51,53,71,87,121,124,156,157,195,202,203,204,312,339,340,395,407,448,485,517,528,529,541,245,216,104,462,513,250,492,420,429,490,10,12,16,17,19,51,53,71,87,121,124,156,157,195,202,203,204,312,339,340,395,407,448,485,517,528,529,541,245,216,104,462,513,250,492,420,429,490,10,12,16,17,19,51,53,71,87,121,124,156,157,195,202,203,204,312,339,340,395,407,448,485,517,528,529,541,245,216,104,462,513,250,492,420,429,490&search=)、[分子动力学](https://www.nvidia.com/en-us/data-center/gpu-accelerated-applications/catalog/?product_category_id=8,57,92,123,211,213,237,272,274,282,283,307,325,337,344,345,351,362,365,380,396,398,400,435,507,508,519,8,57,92,123,211,213,237,272,274,282,283,307,325,337,344,345,351,362,365,380,396,398,400,435,507,508,519,8,57,92,123,211,213,237,272,274,282,283,307,325,337,344,345,351,362,365,380,396,398,400,435,507,508,519,8,57,92,123,211,213,237,272,274,282,283,307,325,337,344,345,351,362,365,380,396,398,400,435,507,508,519&search=)、[量子化学](https://www.nvidia.com/en-us/data-center/gpu-accelerated-applications/catalog/?product_category_id=8,57,92,123,211,213,237,272,274,282,283,307,325,337,344,345,351,362,365,380,396,398,400,435,507,508,519,8,57,92,123,211,213,237,272,274,282,283,307,325,337,344,345,351,362,365,380,396,398,400,435,507,508,519&search=)、[物理学](https://www.nvidia.com/en-us/data-center/gpu-accelerated-applications/catalog/?product_category_id=6,24,116,118,119,135,229,231,372,373,392,393,489,493,494,495,496,497,498,67,170,216,281,6,24,116,118,119,135,229,231,372,373,392,393,489,493,494,495,496,497,498,67,170,216,281,6,24,116,118,119,135,229,231,372,373,392,393,489,493,494,495,496,497,498,67,170,216,281,6,24,116,118,119,135,229,231,372,373,392,393,489,493,494,495,496,497,498,67,170,216,281,6,24,116,118,119,135,229,231,372,373,392,393,489,493,494,495,496,497,498,67,170,216,281&search=) 和高性能计算 (HPC)。
+无论是从出色的性能还是易用性来看，`CUDA`计算平台均是加速计算的制胜法宝。CUDA 提供一种可扩展 C、C++、Python 和 Fortran 等语言的编码范式，能够在世界上性能超强劲的并行处理器 NVIDIA GPU 上运行大量经加速的并行代码。CUDA 可以毫不费力地大幅加速应用程序，具有适用于 `DNN`、`BLAS`、`图形分析`和 `FFT` 等的高度优化库生态系统，并且还附带功能强大的 `命令行` 和 `可视化分析器`。
 
 学习 CUDA 将能助您加速自己的应用程序。加速应用程序的执行速度远远超过 CPU 应用程序，并且可以执行 CPU 应用程序受限于其性能而无法执行的计算。在本实验中, 您将学习使用 CUDA C/C++ 为加速应用程序编程的入门知识，这些入门知识足以让您开始加速自己的 CPU 应用程序以获得性能提升并助您迈入全新的计算领域。
 
@@ -38,26 +34,20 @@ To get the most out of this lab you should already be able to:
 ---
 ## Accelerated Systems
 
-*加速系统*又称*异构系统*，由 CPU 和 GPU 组成。加速系统会运行 CPU 程序，这些程序也会转而启动将受益于 GPU 大规模并行计算能力的函数。本实验环境是一个包含 NVIDIA GPU 的加速系统。可以使用 `nvidia-smi` (*Systems Management Interface*) 命令行命令查询有关此 GPU 的信息。现在，可以在下方的代码执行单元上使用 `CTRL` + `ENTER` 发出 `nvidia-smi` 命令。无论您何时需要执行代码，均可在整个实验中找到这些单元。代码运行后，运行该命令的输出将打印在代码执行单元的正下方。在运行下方的代码执行块后，请注意在输出中找到并记录 GPU 的名称。
+*加速系统*又称*异构系统*，由 CPU 和 GPU 组成。加速系统会运行 CPU 程序，这些程序也会转而启动将受益于 GPU 大规模并行计算能力的函数。本实验环境是一个包含 NVIDIA GPU 的加速系统。可以使用 `nvidia-smi` (*Systems Management Interface的缩写*) 命令行命令查询有关此 GPU 的信息。现在，可以在下方的代码执行单元上使用 `CTRL` + `ENTER` 发出 `nvidia-smi` 命令。无论您何时需要执行代码，均可在整个实验中找到这些单元。代码运行后，运行该命令的输出将打印在代码执行单元的正下方。在运行下方的代码执行块后，请注意在输出中找到并记录 GPU 的名称。
 
 
-```python
-!nvidia-smi
+```shell
+nvidia-smi
 ```
 
 ---
 ## GPU-accelerated Vs. CPU-only Applications
+在`CPU应用程序`中，数据在CPU上进行分配，并且所有工作都在CPU上执行。
 
-以下幻灯片将直观呈现即将发布的材料的概要信息。点击浏览一遍这些幻灯片，然后再继续深入了解以下章节中的主题。
+而在`加速应用程序`中，可以使用`cudaMallocManaged()`分配数据。其数据可由CPU进行访问和处理，并能自动迁移至可执行并行工作的GPU。GPU和CPU是异步工作的，通过`cudaDeviceSynchronize()`,CPU代码可与异步 GPU工作实现同步，并等待后者完成。经CPU访问的数据会自动迁移。
 
-<script>console.log('hi');</script>
-
-
-```python
-%%HTML
-
-<div align="center"><iframe src="https://view.officeapps.live.com/op/view.aspx?src=https://developer.download.nvidia.com/training/courses/C-AC-01-V1/AC_CUDA_C-zh/AC_CUDA_C_1-zh.pptx" frameborder="0" width="900" height="550" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe></div>
-```
+![CUDA和CPU对比](https://pic1.xuehuaimg.com/proxy/csdn/https://img-blog.csdn.net/20160328220721465)
 
 ---
 ## Writing Application Code for the GPU
@@ -90,7 +80,7 @@ int main()
 
 `__global__ void GPUFunction()`
   - `__global__` 关键字表明以下函数将在 GPU 上运行并可**全局**调用，而在此种情况下，则指由 CPU 或 GPU 调用。
-  - 通常，我们将在 CPU 上执行的代码称为**主机**代码，而将在 GPU 上运行的代码称为**设备**代码。
+  - 通常，我们将在 CPU 上执行的代码称为**主机**代码，而将在 GPU 上运行的代码称为**设备**代码，即`__device__`。
   - 注意返回类型为 `void`。使用 `__global__` 关键字定义的函数需要返回 `void` 类型。
 
 `GPUFunction<<<1, 1>>>();`
@@ -105,20 +95,19 @@ int main()
 ---
 ### Exercise: Write a Hello GPU Kernel
 
-[`01-hello-gpu.cu`](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/01-hello/01-hello-gpu.cu)（*<---- 点击源文件链接，以在另一个标签中打开并进行编辑*）包含已在运行的程序。其中包含两个函数，都有打印 \”Hello from the CPU\” 消息。您的目标是重构源文件中的 `helloGPU` 函数，以便该函数实际上在 GPU 上运行，并打印指示执行此操作的消息。
-
-- 请先重构应用程序，然后使用下方的 `nvcc` 命令编译和运行该应用程序（请记住，您可以通过使用 `CTRL + ENTER` 启动该应用程序以执行代码执行单元的内容）。[`01-hello-gpu.cu`](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/01-hello/01-hello-gpu.cu) 中的注释将有助您完成操作。如您遇到问题或要检查自己的操作，请参阅 [解决方案](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/01-hello/solutions/01-hello-gpu-solution.cu)。在使用下方命令进行编译和运行之前，请不要忘记保存对文件所作的更改。
+`01-hello-gpu`文件夹下的`01-hello-gpu.cu`包含已在运行的程序。其中包含两个函数，都有打印 `”Hello from the CPU\”` 消息。您的目标是重构源文件中的 `helloGPU()` 函数，以便该函数实际上在 GPU 上运行，并打印指示执行此操作的消息。参考答案也在同一个文件夹下面
 
 
-```python
-!nvcc -arch=sm_70 -o hello-gpu 01-hello/01-hello-gpu.cu -run
+```shell
+nvcc -arch=sm_70 -o hello-gpu 01-hello/01-hello-gpu.cu -run
 ```
 
-成功重构 [`01-hello-gpu.cu`](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/01-hello/01-hello-gpu.cu) 后，请进行以下修改，并尝试在每次更改后编译并运行该应用程序（通过使用 `CTRL + ENTER` 点击上方的代码执行单元）。若出现错误，请花时间仔细阅读错误内容：熟知错误内容会在您开始编写自己的加速代码时，给与很大的帮助。
+成功重构 `01-hello-gpu.cu` 后，请进行以下修改，并尝试在每次更改后编译并运行该应用程序。
+若出现错误，请花时间仔细阅读错误内容：熟知错误内容会在您开始编写自己的加速代码时，给与很大的帮助。
 
-- 从核函数定义中删除关键字 `__global__`。注意错误中的行号：您认为错误中的 \”configured\” 是什么意思？完成后，请替换 `__global__`。
-- 移除执行配置：您对 \”configured\” 的理解是否仍旧合理？完成后，请替换执行配置。
-- 移除对 `cudaDeviceSynchronize` 的调用。在编译和运行代码之前，猜猜会发生什么情况，可以回顾一下核函数采取的是异步启动，且 `cudaDeviceSynchronize` 会使主机执行暂作等待，直至核函数执行完成后才会继续。完成后，请替换对 `cudaDeviceSynchronize` 的调用。
+- 从核函数定义中删除关键字 `__global__`。注意错误中的行号：您认为错误中的 `configured` 是什么意思？完成后，请替换 `__global__`。
+- 移除执行配置：您对 `configured` 的理解是否仍旧合理？完成后，请替换执行配置。
+- 移除对 `cudaDeviceSynchronize()` 的调用。在编译和运行代码之前，猜猜会发生什么情况，可以回顾一下核函数采取的是异步启动，且 `cudaDeviceSynchronize()` 会使主机执行暂作等待，直至核函数执行完成后才会继续。完成后，请替换对 `cudaDeviceSynchronize()` 的调用。
 - 重构 `01-hello-gpu.cu`，以便 `Hello from the GPU` 在 `Hello from the CPU` **之前**打印。
 - 重构 `01-hello-gpu.cu`，以便 `Hello from the GPU` 打印**两次**，一次是在 `Hello from the CPU` **之前**，另一次是在 `Hello from the CPU` **之后**。
 
@@ -127,8 +116,7 @@ int main()
 ### Compiling and Running Accelerated CUDA Code
 
 本节包含上述为编译和运行 `.cu` 程序而调用的`nvcc` 命令的详细信息。
-
-CUDA 平台附带 [**NVIDIA CUDA 编译器**](http://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html) `nvcc`，可以编译 CUDA 加速应用程序，其中包含主机和设备代码。就本实验而言，`nvcc` 的讨论范围将根据我们的迫切需求据实确定。完成本实验学习后，有意深究 `nvcc` 的所有用户均可从 [文档](http://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html) 开始入手。
+运行程序需要有可使用的cuda环境
 
 曾使用过 `gcc` 的用户会对 `nvcc` 感到非常熟悉。例如，编译 `some-CUDA.cu` 文件就很简单：
 
@@ -142,15 +130,8 @@ CUDA 平台附带 [**NVIDIA CUDA 编译器**](http://docs.nvidia.com/cuda/cuda-c
 
 ---
 ## CUDA Thread Hierarchy
+GPU在线程(thread)中执行工作。线程的集合叫做块(block)，块的数量很多，给的核函数启动相关联的块的集合称为网格(grid)。GPU函数为核函数，其通过执行配置启动并定义了网格的块数、每个块的线程数。在网格中，每个块包含相同数量的线程。
 
-以下幻灯片将直观呈现即将发布的材料的概要信息。点击浏览一遍这些幻灯片，然后再继续深入了解以下章节中的主题。
-
-
-```python
-%%HTML
-
-<div align="center"><iframe src="https://view.officeapps.live.com/op/view.aspx?src=https://developer.download.nvidia.com/training/courses/C-AC-01-V1/AC_CUDA_C-zh/AC_CUDA_C_2-zh.pptx" frameborder="0" width="900" height="550" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe></div>
-```
 
 ---
 ## Launching Parallel Kernels
@@ -170,45 +151,42 @@ CUDA 平台附带 [**NVIDIA CUDA 编译器**](http://docs.nvidia.com/cuda/cuda-c
 ---
 ### Exercise: Launch Parallel Kernels
 
-[`01-first-parallel.cu`](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/02-first-parallel/01-basic-parallel.cu) 目前已作出十分基本的函数调用，即打印消息 `This should be running in parallel`。请按下列步骤首先进行重构使之在 GPU 上运行，然后在单个线程块中并行运行，最后则在多个线程块中运行。如您遇到问题，请参阅 [解决方案](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/02-first-parallel/solutions/01-basic-parallel-solution.cu)。
+`01-first-parallel.cu`目前已作出十分基本的函数调用，即打印消息 `This should be running in parallel`。请按下列步骤首先进行重构使之在 GPU 上运行，然后在单个线程块中并行运行，最后则在多个线程块中运行。如您遇到问题，请参阅 `01-basic-parallel-solution.cu`。
 
 - 重构 `firstParallel` 函数以便在 GPU 上作为 CUDA 核函数启动。在使用下方 `nvcc` 命令编译和运行 `01-basic-parallel.cu` 后，您应仍能看到函数的输出。
 - 重构 `firstParallel` 核函数以便在 5 个线程中并行执行，且均在同一个线程块中执行。在编译和运行代码后，您应能看到输出消息已打印 5 次。
 - 再次重构 `firstParallel` 核函数，并使其在 5 个线程块内并行执行（每个线程块均包含 5 个线程）。编译和运行之后，您应能看到输出消息现已打印 25 次。
 
 
-```python
-!nvcc -arch=sm_70 -o basic-parallel 02-first-parallel/01-basic-parallel.cu -run
+```shell
+nvcc -arch=sm_70 -o basic-parallel basic-parallel/01-basic-parallel.cu -run
 ```
 
 ---
 
 ## CUDA-Provided Thread Hierarchy Variables
+- `gridDim.x`是网格中的块数
+- `blockIdx.x`是网格中当前块的索引
+- `blockDim.x`描述块中的线程数，网格中的所有块包含数量相同的线程，注意，没有`threadDim`这种东西
+- `threadIdx.x`描述块中线程的索引
 
-以下幻灯片将直观呈现即将发布的材料的概要信息。点击浏览一遍这些幻灯片，然后再继续深入了解以下章节中的主题。
 
-
-```python
-%%HTML
-
-<div align="center"><iframe src="https://view.officeapps.live.com/op/view.aspx?src=https://developer.download.nvidia.com/training/courses/C-AC-01-V1/AC_CUDA_C-zh/AC_CUDA_C_3-zh.pptx" frameborder="0" width="900" height="550" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe></div>
-```
 
 ---
 ## Thread and Block Indices
 
-每个线程在其线程块内部均会被分配一个索引，从 `0` 开始。此外，每个线程块也会被分配一个索引，并从 `0` 开始。正如线程组成线程块，线程块又会组成**网格**，而网格是 CUDA 线程层次结构中级别最高的实体。简言之，CUDA 核函数在由一个或多个线程块组成的网格中执行，且每个线程块中均包含相同数量的一个或多个线程。
+每个线程在其线程块内部均会被分配一个索引，从 `0` 开始。此外，每个线程块也会被分配一个索引，并从 `0` 开始。正如线程组成线程块，线程块又会组成**网格**，而网格是 CUDA 线程层次结构中`级别最高`的实体。简言之，CUDA 核函数在由一个或多个线程块组成的网格中执行，且每个线程块中均包含相同数量的一个或多个线程。
 
 CUDA 核函数可以访问能够识别如下两种索引的特殊变量：正在执行核函数的线程（位于线程块内）索引和线程所在的线程块（位于网格内）索引。这两种变量分别为 `threadIdx.x` 和 `blockIdx.x`。
 
 ---
 ### Exercise: Use Specific Thread and Block Indices
 
-目前，[`01-thread-and-block-idx.cu`](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/03-indices/01-thread-and-block-idx.cu) 文件包含一个正在打印失败消息的执行中的核函数。打开文件以了解如何更新执行配置，以便打印成功消息。重构后，请使用下方代码执行单元编译并运行代码以确认您的工作。如您遇到问题，请参阅 [解决方案](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/03-indices/solutions/01-thread-and-block-idx-solution.cu)。
+目前，`01-thread-and-block-idx.cu`文件包含一个正在打印失败消息的执行中的核函数。打开文件以了解如何更新执行配置，以便打印成功消息。重构后，请使用下方代码执行单元编译并运行代码以确认您的工作。如您遇到问题，请参阅 `01-thread-and-block-idx-solution.cu`。
 
 
-```python
-!nvcc -arch=sm_70 -o thread-and-block-idx 03-indices/01-thread-and-block-idx.cu -run
+```shell
+!nvcc -arch=sm_70 thread-and-block-idx/01-thread-and-block-idx.cu -run
 ```
 
 ---
@@ -232,24 +210,19 @@ for (int i = 0; i < N; ++i)
 ---
 ### Exercise: Accelerating a For Loop with a Single Block of Threads
 
-目前，[`01-single-block-loop.cu`](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/04-loops/01-single-block-loop.cu) 内的 `loop` 函数运行着一个“for 循环”并将连续打印 `0` 至 `9` 之间的所有数字。将 `loop` 函数重构为 CUDA 核函数，使其在启动后并行执行 `N` 次迭代。重构成功后，应仍能打印 `0` 至 `9` 之间的所有数字。如您遇到问题，请参阅 [解决方案](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/04-loops/solutions/01-single-block-loop-solution.cu)。
+目前，`01-single-block-loop.cu` 内的 `loop` 函数运行着一个“for 循环”并将连续打印 `0` 至 `9` 之间的所有数字。将 `loop` 函数重构为 CUDA 核函数，使其在启动后并行执行 `N` 次迭代。重构成功后，应仍能打印 `0` 至 `9` 之间的所有数字。如您遇到问题，请参阅 `01-single-block-loop-solution.cu`。
 
 
-```python
-!nvcc -arch=sm_70 -o single-block-loop 04-loops/01-single-block-loop.cu -run
+```shell
+nvcc -arch=sm_70 -o single-block-loop 04-loops/01-single-block-loop.cu -run
 ```
 
 ---
 ## Coordinating Parallel Threads
+GPU由于某种未知原因，必须映射每个进程以处理向量中的元素。每个线程都可以通过`blockDim.x`访问所在块大小并通过`blockIdx.x`访问网格内所在块的索引，`threadIdx.x`访问所在块自身的线程索引。
 
-以下幻灯片将直观呈现即将发布的材料的概要信息。点击浏览一遍这些幻灯片，然后再继续深入了解以下章节中的主题。
+公式`threadIdx.x + blockIdx.x * blockDim.x`可把每个线程映射到向量的元素中。
 
-
-```python
-%%HTML
-
-<div align="center"><iframe src="https://view.officeapps.live.com/op/view.aspx?src=https://developer.download.nvidia.com/training/courses/C-AC-01-V1/AC_CUDA_C-zh/AC_CUDA_C_4-zh.pptx" frameborder="0" width="900" height="550" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe></div>
-```
 
 ---
 ## Using Block Dimensions for More Parallelization
@@ -269,11 +242,11 @@ CUDA 核函数可以访问给出块中线程数的特殊变量：`blockDim.x`。
 ---
 ### Exercise: Accelerating a For Loop with Multiple Blocks of Threads
 
-目前，[`02-multi-block-loop.cu`](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/04-loops/02-multi-block-loop.cu) 内的 `loop` 函数运行着一个“for 循环”并将连续打印 `0` 至 `9` 之间的所有数字。将 `loop` 函数重构为 CUDA 核函数，使其在启动后并行执行 `N` 次迭代。重构成功后，应仍能打印 `0` 至 `9` 之间的所有数字。对于本练习，作为附加限制，请使用启动*至少 2 个线程块*的执行配置。如您遇到问题，请参阅 [解决方案](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/04-loops/solutions/02-multi-block-loop-solution.cu)。
+目前，`multi-block-loop\02-multi-block-loop.cu`内的 `loop` 函数运行着一个“for 循环”并将连续打印 `0` 至 `9` 之间的所有数字。将 `loop` 函数重构为 CUDA 核函数，使其在启动后并行执行 `N` 次迭代。重构成功后，应仍能打印 `0` 至 `9` 之间的所有数字。对于本练习，作为附加限制，请使用启动*至少 2 个线程块*的执行配置。如您遇到问题，请参阅`02-multi-block-loop-solution.cu`。
 
 
-```python
-!nvcc -arch=sm_70 -o multi-block-loop 04-loops/02-multi-block-loop.cu -run
+```shell
+nvcc -arch=sm_70 multi-block-loop/02-multi-block-loop.cu -run
 ```
 
 ---
@@ -281,7 +254,7 @@ CUDA 核函数可以访问给出块中线程数的特殊变量：`blockDim.x`。
 
 CUDA 的最新版本（版本 6 和更高版本）已能轻松分配可用于 CPU 主机和任意数量 GPU 设备的内存。尽管现今有许多适用于内存管理并可支持加速应用程序中最优性能的 [中高级技术](http://docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#memory-optimizations)，但我们现在要介绍的基础 CUDA 内存管理技术不但能够支持远超 CPU 应用程序的卓越性能，而且几乎不会产生任何开发人员成本。
 
-如要分配和释放内存，并获取可在主机和设备代码中引用的指针，请使用 `cudaMallocManaged` 和 `cudaFree` 取代对 `malloc` 和 `free` 的调用，如下例所示：
+如要分配和释放内存，并获取可在主机和设备代码中引用的指针，请使用 `cudaMallocManaged` 和 `cudaFree` 取代对 `malloc` 和 `free` 的调用，即把内存的分配和释放都从CPU迁移到GPU上，如下例所示：
 
 ```cpp
 // CPU-only
@@ -315,26 +288,19 @@ cudaFree(a);
 ---
 ### Exercise: Array Manipulation on both the Host and Device
 
-[`01-double-elements.cu`](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/05-allocate/01-double-elements.cu) 程序会分配一个数组、在主机上使用整数值对其进行初始化并尝试在 GPU 上对其中的每个值并行加倍，然后在主机上确认加倍操作是否成功。目前，程序将无法执行：因其正尝试在主机和设备上与指针 `a` 指向的数组进行交互，但仅分配可在主机上访问的数组（使用 `malloc`）。重构应用程序以满足以下条件，如您遇到问题，请参阅 [解决方案](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/05-allocate/solutions/01-double-elements-solution.cu)：
+`double-elements\01-double-elements.cu` 程序会分配一个数组、在主机上使用整数值对其进行初始化并尝试在 GPU 上对其中的每个值并行加倍，然后在主机上确认加倍操作是否成功。目前，程序将无法执行：因其正尝试在主机和设备上与指针 `a` 指向的数组进行交互，但仅分配可在主机上访问的数组（使用 `malloc`）。重构应用程序以满足以下条件，如您遇到问题，请参阅 `double-elements\01-double-elements-solution.cu`
 
 - 指针 `a` 应可供主机和设备代码使用。
 - 应该正确释放指针 `a` 的内存。
 
 
-```python
-!nvcc -arch=sm_70 -o double-elements 05-allocate/01-double-elements.cu -run
+```shell
+nvcc -arch=sm_70 -o double-elements 05-allocate/01-double-elements.cu -run
 ```
 
 ## Grid Size Work Amount Mismatch
+在之前的场景中，网格中的线程数与元素数量完全匹配。如果线程数超过要完成的工作量，尝试访问不存在的元素会导致运行时错误，这个时候就需要用`if`条件语句，确保`threadIdx.x + blockIdx.x * blockDim.x`计算出的`dataIndex`小于数据元素数量N
 
-以下幻灯片将直观呈现即将发布的材料的概要信息。点击浏览一遍这些幻灯片，然后再继续深入了解以下章节中的主题。
-
-
-```python
-%%HTML
-
-<div align="center"><iframe src="https://view.officeapps.live.com/op/view.aspx?src=https://developer.download.nvidia.com/training/courses/C-AC-01-V1/AC_CUDA_C-zh/AC_CUDA_C_5-zh.pptx" frameborder="0" width="900" height="550" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe></div>
-```
 
 ---
 ## Handling Block Configuration Mismatches to Number of Needed Threads
@@ -361,6 +327,7 @@ size_t threads_per_block = 256;
 
 // Ensure there are at least `N` threads in the grid, but only 1 block's worth extra
 size_t number_of_blocks = (N + threads_per_block - 1) / threads_per_block;
+// Better than N/threads_per_block + 1, considering  when N % threads_per_block = 0 
 
 some_kernel<<<number_of_blocks, threads_per_block>>>(N);
 ```
@@ -382,26 +349,14 @@ __global__ some_kernel(int N)
 ---
 ### Exercise: Accelerating a For Loop with a Mismatched Execution Configuration
 
-[`02-mismatched-config-loop.cu`](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/05-allocate/02-mismatched-config-loop.cu) 中的程序使用 `cudaMallocManaged` 为包含 1000 个元素的整数数组分配内存，然后试图使用 CUDA 核函数以并行方式初始化数组中的所有值。此程序假设 `N` 和 `threads_per_block` 的数量均为已知。您的任务是完成以下两个目标，如您遇到问题，请参阅 [解决方案](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/05-allocate/solutions/02-mismatched-config-loop-solution.cu)：
+`mismatched-config-loop\02-mismatched-config-loop.cu`中的程序使用 `cudaMallocManaged` 为包含 1000 个元素的整数数组分配内存，然后试图使用 CUDA 核函数以并行方式初始化数组中的所有值。此程序假设 `N` 和 `threads_per_block` 的数量均为已知。您的任务是完成以下两个目标，如您遇到问题，请参阅 `mismatched-config-loop\02-mismatched-config-loop-solution.cu`：
 
 - 为 `number_of_blocks` 分配一个值，以确保线程数至少与指针 `a` 中可供访问的元素数同样多。
 - 更新 `initializeElementsTo` 核函数以确保不会尝试访问超出范围的数据元素。
 
 
-```python
-!nvcc -arch=sm_70 -o mismatched-config-loop 05-allocate/02-mismatched-config-loop.cu -run
-```
-
----
-## Grid-Stride Loops
-
-以下幻灯片将直观呈现即将发布的材料的概要信息。点击浏览一遍这些幻灯片，然后再继续深入了解以下章节中的主题。
-
-
-```python
-%%HTML
-
-<div align="center"><iframe src="https://view.officeapps.live.com/op/view.aspx?src=https://developer.download.nvidia.com/training/courses/C-AC-01-V1/AC_CUDA_C-zh/AC_CUDA_C_1-zh.pptx" frameborder="0" width="900" height="550" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe></div>
+```shell
+!nvcc -arch=sm_70 -o mismatched-config-loop/02-mismatched-config-loop.cu -run
 ```
 
 ---
@@ -432,15 +387,30 @@ __global void kernel(int *a, int N)
   }
 }
 ```
+由于grid是GPU执行计算执行核函数的单位，不可以直接跨过grid。
+错误示范：
+```cpp
+__global void kernel(int *a, int N)
+{
+  int indexWithinTheGrid = threadIdx.x + blockIdx.x * blockDim.x;
+  //int gridStride = gridDim.x * blockDim.x;
+
+  if(indexWithinTheGrid<N)
+  {
+    // do work on a[i];
+  }
+}
+```
+这样子是无法处理那些超出范围的数据。
 
 ---
 ### Exercise: Use a Grid-Stride Loop to Manipulate an Array Larger than the Grid
 
-重构 [`03-grid-stride-double.cu`](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/05-allocate/03-grid-stride-double.cu) 以在 `doubleElements` 核函数中使用网格跨度循环，进而使小于 `N` 的网格可以重用线程以覆盖数组中的每个元素。程序会打印数组中的每个元素是否均已加倍，而当前该程序会准确打印出 `FALSE`。如您遇到问题，请参阅 [解决方案](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/05-allocate/solutions/03-grid-stride-double-solution.cu)。
+重构 `grid-stride-double\03-grid-stride-double.cu` 以在 `doubleElements` 核函数中使用网格跨度循环，进而使小于 `N` 的网格可以重用线程以覆盖数组中的每个元素。程序会打印数组中的每个元素是否均已加倍，而当前该程序会准确打印出 `FALSE`。如您遇到问题，请参阅 `grid-stride-double\03-grid-stride-double-solution.cu`。
 
 
-```python
-!nvcc -arch=sm_70 -o grid-stride-double 05-allocate/03-grid-stride-double.cu -run
+```shell
+nvcc -arch=sm_70 grid-stride-double/03-grid-stride-double.cu -run
 ```
 
 ---
@@ -478,14 +448,16 @@ if (err != cudaSuccess)
 
 最后，为捕捉异步错误（例如，在异步核函数执行期间），请务必检查后续同步 CUDA 运行时 API 调用所返回的状态（例如 `cudaDeviceSynchronize`）；如果之前启动的其中一个核函数失败，则将返回错误。
 
+`cudaMallocManaged`之类的函数就不需要返回值了。主要是由上面两个函数完成错误处理。
+
 ---
 ### Exercise: Add Error Handling
 
-目前，[`01-add-error-handling.cu`](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/06-errors/01-add-error-handling.cu) 会编译、运行并打印已加倍失败的数组元素。不过，该程序不会指明其中是否存在任何错误。重构应用程序以处理 CUDA 错误，以便您可以了解程序出现的问题并进行有效调试。您将需要调查在调用 CUDA 函数时可能出现的同步错误，以及在执行 CUDA 核函数时可能出现的异步错误。如您遇到问题，请参阅 [解决方案](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/06-errors/solutions/01-add-error-handling-solution.cu)。
+目前，`01-add-error-handling.cu`会编译、运行并打印已加倍失败的数组元素。不过，该程序不会指明其中是否存在任何错误。重构应用程序以处理 CUDA 错误，以便您可以了解程序出现的问题并进行有效调试。您将需要调查在调用 CUDA 函数时可能出现的同步错误，以及在执行 CUDA 核函数时可能出现的异步错误。如您遇到问题，请参阅 `add-error-handling/01-add-error-handling-solution.cu`。
 
 
-```python
-!nvcc -arch=sm_70 -o add-error-handling 06-errors/01-add-error-handling.cu -run
+```shell
+nvcc -arch=sm_70 -o add-error-handling/01-add-error-handling.cu -run
 ```
 
 ---
@@ -539,7 +511,7 @@ int main()
 
 下面的挑战将使您有机会运用在实验中学到的知识。其中涉及加速 CPU 向量加法程序，尽管该程序不甚复杂，但仍能让您有机会重点运用所学的借助 CUDA 加速 GPU 应用程序的相关知识。完成此练习后，如果您有富余时间并有意深究，可继续学习*高阶内容*部分以了解涉及更复杂代码库的一些挑战。
 
-[`01-vector-add.cu`](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/07-vector-add/01-vector-add.cu) 包含一个可正常运作的 CPU 向量加法应用程序。加速其 `addVectorsInto` 函数，使之在 GPU 上以 CUDA 核函数运行并使其并行执行工作。鉴于需发生以下操作，如您遇到问题，请参阅 [解决方案](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/07-vector-add/solutions/01-vector-add-solution.cu)。
+`vector-add\01-vector-add.cu`包含一个可正常运作的 CPU 向量加法应用程序。加速其 `addVectorsInto` 函数，使之在 GPU 上以 CUDA 核函数运行并使其并行执行工作。鉴于需发生以下操作，如您遇到问题，请参阅 `vector-add\01-vector-add-solution.cu`。
 
 - 扩充 `addVectorsInto` 定义，使之成为 CUDA 核函数。
 - 选择并使用有效的执行配置，以使 `addVectorsInto` 作为 CUDA 核函数启动。
@@ -548,8 +520,8 @@ int main()
 - 在 CUDA 代码可能以其他方式静默失败的位置添加错误处理。
 
 
-```python
-!nvcc -arch=sm_70 -o vector-add 07-vector-add/01-vector-add.cu -run
+```shell
+nvcc -arch=sm_70 vector-add/01-vector-add.cu -run
 ```
 
 ---
@@ -573,14 +545,14 @@ someKernel<<<number_of_blocks, threads_per_block>>>();
 ---
 ### Exercise: Accelerate 2D Matrix Multiply Application
 
-文件 [`01-matrix-multiply-2d.cu`](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/08-matrix-multiply/01-matrix-multiply-2d.cu) 包含一个功能齐全的主机函数 `matrixMulCPU`。您的任务是扩建 CUDA 核函数 `matrixMulGPU`。源代码将使用这两个函数执行矩阵乘法，并比较它们的答案以验证您编写的 CUDA 核函数是否正确。使用以下指南获得操作支持，如您遇到问题，请参阅 [解决方案](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/08-matrix-multiply/solutions/01-matrix-multiply-2d-solution.cu)：
+文件 `01-matrix-multiply-2d.cu`包含一个功能齐全的主机函数 `matrixMulCPU`。您的任务是扩建 CUDA 核函数 `matrixMulGPU`。源代码将使用这两个函数执行矩阵乘法，并比较它们的答案以验证您编写的 CUDA 核函数是否正确。使用以下指南获得操作支持，如您遇到问题，请参阅`matrix-multiply/01-matrix-multiply-2d-solution.cu`：
 
 - 您将需创建执行配置，其参数均为 `dim3` 值，且 `x` 和 `y` 维度均设为大于 `1`。
 - 在核函数主体内部，您将需要按照惯例在网格内建立所运行线程的唯一索引，但应为线程建立两个索引：一个用于网格的 x 轴，另一个用于网格的 y 轴。
 
 
-```python
-!nvcc -arch=sm_70 -o matrix-multiply-2d 08-matrix-multiply/01-matrix-multiply-2d.cu -run
+```shell
+nvcc -arch=sm_70 matrix-multiply-2d/01-matrix-multiply-2d.cu -run
 ```
 
 ---
@@ -588,11 +560,11 @@ someKernel<<<number_of_blocks, threads_per_block>>>();
 
 在下面的练习中，您将为模拟金属银二维热传导的应用程序执行加速操作。
 
-将 [`01-heat-conduction.cu`](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/09-heat/01-heat-conduction.cu) 内的 `step_kernel_mod` 函数转换为在 GPU 上执行，并修改 `main` 函数以恰当分配在 CPU 和 GPU 上使用的数据。`step_kernel_ref` 函数在 CPU 上执行并用于检查错误。由于此代码涉及浮点计算，因此不同的处理器甚或同一处理器上的简单重排操作都可能导致结果略有出入。为此，错误检查代码会使用错误阈值，而非查找完全匹配。如您遇到问题，请参阅 [解决方案](../../../../../edit/tasks/task1/task/01_AC_CUDA_C-zh/09-heat/solutions/01-heat-conduction-solution.cu)。
+将 `01-heat-conduction.cu`内的 `step_kernel_mod` 函数转换为在 GPU 上执行，并修改 `main` 函数以恰当分配在 CPU 和 GPU 上使用的数据。`step_kernel_ref` 函数在 CPU 上执行并用于检查错误。由于此代码涉及浮点计算，因此不同的处理器甚或同一处理器上的简单重排操作都可能导致结果略有出入。为此，错误检查代码会使用错误阈值，而非查找完全匹配。如您遇到问题，请参阅`heat-conduction\01-heat-conduction-solution.cu`。
 
 
-```python
-!nvcc -arch=sm_70 -o heat-conduction 09-heat/01-heat-conduction.cu -run
+```shell
+nvcc -arch=sm_70 -o heat-conduction 09-heat/01-heat-conduction.cu -run
 ```
 
 > 此任务中的原始热传导 CPU 源代码取自于休斯顿大学的文章 [An OpenACC Example Code for a C-based heat conduction code](http://docplayer.net/30411068-An-openacc-example-code-for-a-c-based-heat-conduction-code.html)（基于 C 的热传导代码的 OpenACC 示例代码）。

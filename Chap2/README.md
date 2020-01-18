@@ -1,6 +1,5 @@
 
-<h1><div align="center">使用 CUDA C/C++ 统一内存和 nvprof 管理加速应用程序内存</div></h1>
-![CUDA](./images/CUDA_Logo.jpg)
+# 使用 CUDA C/C++ 统一内存和 nvprof 管理加速应用程序内存
 
 对于本实验和其他 CUDA 基础实验，我们强烈建议您遵循 [*CUDA 最佳实践指南*](http://docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#memory-optimizations)，其中推荐一种称为 **APOD** 的设计周期：**评估**、**并行化**、**优化**和**部署**。简言之，APOD 规定一个迭代设计过程，开发人员能够在该过程中对其加速应用程序性能施以渐进式改进，并发布代码。随着开发人员的 CUDA 编程能力愈渐增强，他们已能在加速代码库中应用更先进的优化技术。
 
@@ -32,14 +31,14 @@
 
 如要确保优化加速代码库的尝试真正取得成功，唯一方法便是分析应用程序以获取有关其性能的定量信息。`nvprof` 是指 NVIDIA 命令行分析器。该分析器附带于CUDA工具包中，能为加速应用程序分析提供强大功能。
 
-`nvprof` 使用起来十分简单，最基本用法是向其传递使用 `nvcc` 编译的可执行文件的路径。随后 `nvprof` 会继续执行应用程序，并在此之后打印应用程序 GPU 活动的摘要输出、CUDA API 调用以及**统一内存**活动的相关信息。我们稍后会在本实验中详细介绍这一主题。
+`nvprof` 使用起来十分简单，最基本用法是向其传递使用 `nvcc` 编译的**可执行文件**的路径。随后 `nvprof` 会继续执行应用程序，并在此之后打印应用程序 GPU 活动的摘要输出、CUDA API 调用以及**统一内存**活动的相关信息。我们稍后会在本实验中详细介绍这一主题。
 
 在加速应用程序或优化已经加速的应用程序时，应该采用科学的迭代方法。作出更改后需分析应用程序、做好记录并记录任何重构可能会对性能造成何种影响。尽早且频繁进行此类观察通常会让您轻松获得足够的性能提升，以助您发布加速应用程序。此外，频繁分析应用程序将使您了解到对 CUDA 代码库作出的特定更改会对其实际性能造成何种影响：而当只在代码库中进行多种更改后再分析应用程序时，将很难得知这一点。
 
 
 ### Exercise: Profile an Application with nvprof
 
-[01-vector-add.cu](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/01-vector-add/01-vector-add.cu)（<------您可点击打开此文件链接和本实验中的任何源文件链接并进行编辑）是一个简单易用的加速向量加法程序。使用下方两个代码执行单元（按住 `CTRL` 并点击即可）。第一个代码执行单元将编译（及运行）向量加法程序。第二个代码执行单元将运用 `nvprof` 分析刚编译好的可执行文件。
+`01-vector-add.cu`是一个简单易用的加速向量加法程序。第一条命令将执行单元将编译（及运行）向量加法程序。第二条命令执行单元将运用 `nvprof` 分析刚编译好的可执行文件。
 
 应用程序分析完毕后，请使用分析输出中显示的信息回答下列问题：
 
@@ -48,35 +47,35 @@
 - 此核函数的运行时间为？在某处记录此时间：您将优化此应用程序，还会希望得知所能取得的最大优化速度。
 
 
-```python
-!nvcc -arch=sm_70 -o single-thread-vector-add 01-vector-add/01-vector-add.cu -run
+```shell
+nvcc -arch=sm_70 single-thread-vector-add/01-vector-add.cu -run
 ```
 
 
-```python
-!nvprof ./single-thread-vector-add
+```shell
+nvprof ./a.out
 ```
 
 ### Exercise: Optimize and Profile
 
-请抽出一到两分钟时间，更新 [01-vector-add.cu](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/01-vector-add/01-vector-add.cu) 的执行配置以对其进行简单优化，以便其能在单个线程块中的多个线程上运行。请使用下方的代码执行单元重新编译并借助 `nvprof` 进行分析。使用分析输出检查核函数的运行时。此优化带来多大的速度提升？请务必在某处记录您的结果。
+请抽出一到两分钟时间，更新 `01-vector-add.cu` 的执行配置以对其进行简单优化，以便其能在单个线程块中的多个线程上运行。请使用下方的代码执行单元重新编译并借助 `nvprof` 进行分析。使用分析输出检查核函数的运行时。此优化带来多大的速度提升？请务必在某处记录您的结果。
 
 
-```python
-!nvcc -arch=sm_70 -o multi-thread-vector-add 01-vector-add/01-vector-add.cu -run
+```shell
+nvcc -arch=sm_70 multi-thread-vector-add/01-vector-add.cu -run
 ```
 
 
-```python
-!nvprof ./multi-thread-vector-add
+```shell
+nvprof ./a.out
 ```
 
 ### Exercise: Optimize Iteratively
 
-在本练习中，您将经历数个周期，具体包括：编辑 [01-vector-add.cu](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/01-vector-add/01-vector-add.cu) 的执行配置、开展分析及记录结果以查看影响。开展操作时请依循以下指南：
+在本练习中，您将经历数个周期，具体包括：编辑 `vector-add\01-vector-add.cu` 的执行配置、开展分析及记录结果以查看影响。开展操作时请依循以下指南：
 
 - 首先列出您将用于更新执行配置的 3 至 5 种不同方法，确保涵盖一系列不同的网格和线程块大小组合。
-- 使用所列的其中一种方法编辑 [01-vector-add.cu](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/01-vector-add/01-vector-add.cu) 程序。
+- 使用所列的其中一种方法编辑 `vector-add\01-vector-add.cu`程序。
 - 使用下方的两个代码执行单元编译和分析更新后的代码。
 - 记录核函数执行的运行时，应与分析输出中给出的相同。
 - 对以上列出的每个可能实现的优化重复执行编辑/分析/记录循环
@@ -84,14 +83,16 @@
 在您尝试的执行配置中，哪个经证明最快？
 
 
-```python
-!nvcc -arch=sm_70 -o iteratively-optimized-vector-add 01-vector-add/01-vector-add.cu -run
+```shell
+nvcc -arch=sm_70 iteratively-optimized-vector-add/01-vector-add.cu -run
 ```
 
 
-```python
-!nvprof ./iteratively-optimized-vector-add
+```shell
+nvprof ./a.out
 ```
+
+### To do below
 
 ---
 ## Streaming Multiprocessors and Querying the Device
