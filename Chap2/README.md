@@ -92,21 +92,15 @@ nvcc -arch=sm_70 iteratively-optimized-vector-add/01-vector-add.cu -run
 nvprof ./a.out
 ```
 
-### To do below
 
 ---
 ## Streaming Multiprocessors and Querying the Device
 
-本节将探讨了解 GPU 硬件的特定功能如何可以促进优化。学习完**流多处理器**后，您将尝试进一步优化自己一直执行的加速向量加法程序。
+在硬件上，**NVIDIA GPU**包含称为流处理器或SM的功能单元，线程块均可安排在**SM**上运行，根据GPU数量以及线程块的要求，可以在SM上安排运行多个线程块。
 
-以下幻灯片将直观呈现即将发布的材料的概要信息。点击浏览一遍这些幻灯片，然后再继续深入了解以下章节中的主题。
+如果网络维度能被GPU上的SM数量整除，则可以充分提高SM的利用率。
 
 
-```python
-%%HTML
-
-<div align="center"><iframe src="https://view.officeapps.live.com/op/view.aspx?src=https://developer.download.nvidia.com/training/courses/C-AC-01-V1/AC_UM_NVPROF-zh/NVPROF_UM_1-zh.pptx" frameborder="0" width="900" height="550" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe></div>
-```
 
 ### Streaming Multiprocessors and Warps
 
@@ -118,7 +112,7 @@ nvprof ./a.out
 
 由于 GPU 上的 SM 数量会因所用的特定 GPU 而异，因此为支持可移植性，您不得将 SM 数量硬编码到代码库中。相反，应该以编程方式获取此信息。
 
-以下所示为在 CUDA C/C++ 中获取 C 结构的方法，该结构包含当前处于活动状态的 GPU 设备的多个属性，其中包括设备的 SM 数量：
+以下所示为在 CUDA C/C++ 中获取 C 结构`cudaDeviceProp`的方法，该结构包含当前处于活动状态的 GPU 设备的多个属性，其中包括设备的 SM 数量：
 
 ```cpp
 int deviceId;
@@ -128,32 +122,33 @@ cudaDeviceProp props;
 cudaGetDeviceProperties(&props, deviceId); // `props` now has many useful properties about
                                            // the active GPU device.
 ```
+上面的这个props里面有多个属性表示。
 
 ### Exercise: Query the Device
 
-目前，[`01-get-device-properties.cu`](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/04-device-properties/01-get-device-properties.cu) 包含众多未分配的变量，并将打印一些无用信息，这些信息用于描述当前处于活动状态的 GPU 设备的详细信息。
+目前，`get-device-properties/01-get-device-properties.cu`包含众多未分配的变量，并将打印一些无用信息，这些信息用于描述当前处于活动状态的 GPU 设备的详细信息。
 
-扩建 [`01-get-device-properties.cu`](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/04-device-properties/01-get-device-properties.cu) 以打印源代码中指示的所需设备属性的实际值。为获取操作支持并查看相关介绍，请参阅 [CUDA 运行时文档](http://docs.nvidia.com/cuda/cuda-runtime-api/structcudaDeviceProp.html) 以帮助识别设备属性结构中的相关属性。如您遇到问题，请参阅 [解决方案](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/04-device-properties/solutions/01-get-device-properties-solution.cu)。
+扩建 `01-get-device-properties.cu` 以打印源代码中指示的所需设备属性的实际值。为获取操作支持并查看相关介绍，请参阅 [CUDA 运行时文档](http://docs.nvidia.com/cuda/cuda-runtime-api/structcudaDeviceProp.html) 以帮助识别设备属性结构中的相关属性。如您遇到问题，请参阅 [解决方案](01-get-device-properties-solution.cu)。
 
 
 ```python
-!nvcc -arch=sm_70 -o get-device-properties 04-device-properties/01-get-device-properties.cu -run
+!nvcc -arch=sm_70 get-device-properties/01-get-device-properties.cu -run
 ```
 
 ### Exercise: Optimize Vector Add with Grids Sized to Number of SMs
 
-通过查询设备的 SM 数量重构您一直在 [01-vector-add.cu](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/01-vector-add/01-vector-add.cu) 内执行的 `addVectorsInto` 核函数，以便其启动时的网格包含数倍于设备上 SM 数量的线程块数。
+通过查询设备的 SM 数量重构您一直在 `01-vector-add.cu` 内执行的 `addVectorsInto` 核函数，以便其启动时的网格包含数倍于设备上 SM 数量的线程块数。
 
 根据您所编写代码中的其他特定详细信息，此重构可能会或不会提高或大幅改善核函数的性能。因此，请务必始终使用 `nvprof`，以便定量评估性能变化。根据分析输出，记录目前所得结果和其他发现。
 
 
-```python
-!nvcc -arch=sm_70 -o sm-optimized-vector-add 01-vector-add/01-vector-add.cu -run
+```shell
+nvcc -arch=sm_70 sm-optimized-vector-add/01-vector-add.cu -run
 ```
 
 
-```python
-!nvprof ./sm-optimized-vector-add
+```shell
+nvprof ./a.out
 ```
 
 ---
@@ -167,12 +162,13 @@ cudaGetDeviceProperties(&props, deviceId); // `props` now has many useful proper
 ```python
 %%HTML
 
-<div align="center"><iframe src="https://view.officeapps.live.com/op/view.aspx?src=https://developer.download.nvidia.com/training/courses/C-AC-01-V1/AC_UM_NVPROF-zh/NVPROF_UM_2-zh.pptx" frameborder="0" width="900" height="550" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe></div>
+<div align="ce
+nter"><iframe src="https://view.officeapps.live.com/op/view.aspx?src=https://developer.download.nvidia.com/training/courses/C-AC-01-V1/AC_UM_NVPROF-zh/NVPROF_UM_2-zh.pptx" frameborder="0" width="900" height="550" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe></div>
 ```
 
 ### Unified Memory Migration
 
-分配 UM 时，内存尚未驻留在主机或设备上。主机或设备尝试访问内存时会发生 [页错误](https://en.wikipedia.org/wiki/Page_fault)，此时主机或设备会批量迁移所需的数据。同理，当 CPU 或加速系统中的任何 GPU 尝试访问尚未驻留在其上的内存时，会发生页错误并触发迁移。
+分配一致性內存的时候，内存尚未驻留在主机或设备上。主机或设备尝试访问内存时会发生 [页错误](https://en.wikipedia.org/wiki/Page_fault)，此时主机或设备会批量迁移所需的数据。同理，当 CPU 或加速系统中的任何 GPU 尝试访问尚未驻留在其上的内存时，会发生页错误并触发迁移。
 
 能够执行页错误并按需迁移内存对于在加速应用程序中简化开发流程大有助益。此外，在处理展示稀疏访问模式的数据时（例如，在应用程序实际运行之前无法得知需要处理的数据时），以及在具有多个 GPU 的加速系统中，数据可能由多个 GPU 设备访问时，按需迁移内存将会带来显著优势。
 
@@ -196,13 +192,13 @@ cudaGetDeviceProperties(&props, deviceId); // `props` now has many useful proper
 - 当统一内存先由 GPU 访问后由 CPU 访问时会出现什么情况？（[解决方案](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/06-unified-memory-page-faults/solutions/04-page-faults-solution-gpu-then-cpu.cu)）
 
 
-```python
-!nvcc -arch=sm_70 -o page-faults 06-unified-memory-page-faults/01-page-faults.cu -run
+```shell
+nvcc -arch=sm_70 page-faults/01-page-faults.cu -run
 ```
 
 
-```python
-!nvprof ./page-faults
+```shell
+nvprof ./a.out
 ```
 
 ### Exercise: Revisit UM Behavior for Vector Add Program
@@ -210,8 +206,8 @@ cudaGetDeviceProperties(&props, deviceId); // `props` now has many useful proper
 返回您一直在本实验中执行的 [01-vector-add.cu](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/01-vector-add/01-vector-add.cu) 程序，查看程序在当前状态下的代码库，并假设您期望发生何种页错误。查看上一个重构的分析输出（可通过向上滚动查找输出或通过执行下方的代码执行单元进行查看），并观察分析器输出的统一内存部分。您可否根据代码库的内容对页错误描述作一解释？
 
 
-```python
-!nvprof ./sm-optimized-vector-add
+```shell
+nvprof ./a.out
 ```
 
 ### Exercise: Initialize Vector in Kernel
@@ -226,13 +222,13 @@ cudaGetDeviceProperties(&props, deviceId); // `props` now has many useful proper
 请再次记录结果。如您遇到问题，请参阅 [解决方案](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/07-init-in-kernel/solutions/01-vector-add-init-in-kernel-solution.cu)。
 
 
-```python
-!nvcc -arch=sm_70 -o initialize-in-kernel 01-vector-add/01-vector-add.cu -run
+```shell
+nvcc -arch=sm_70 initialize-in-kernel/01-vector-add.cu -run
 ```
 
 
-```python
-!nvprof ./initialize-in-kernel
+```shell
+nvprof ./a.out
 ```
 
 ---
