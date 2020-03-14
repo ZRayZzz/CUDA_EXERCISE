@@ -5,7 +5,7 @@
 
 本实验将支持这种迭代开发风格。您将使用 **NVIDIA 命令行分析器**定性衡量应用程序性能及确定优化机会，之后您将应用渐进式改进，最后您会学习新技术并重复该周期。需重点关注的是，您将在本实验中学习及应用的众多技术均会涉及 CUDA **统一内存**工作原理的具体细节。理解统一内存行为是 CUDA 开发人员的一项基本技能，同时也可作为多项更先进内存管理技术的先决条件。
 
----
+
 ## Prerequisites
 
 如要充分利用本实验，您应已能胜任如下任务：
@@ -15,7 +15,7 @@
 - 重构串行循环以在 GPU 上并行执行其迭代。
 - 分配和释放统一内存。
 
----
+
 ## Objectives
 
 当您在本实验完成学习后，您将能够：
@@ -26,7 +26,7 @@
 - 使用**异步内存预取**减少页错误和数据迁移以提高性能。
 - 采用迭代开发周期快速加速和部署应用程序。
 
----
+
 ## Iterative Optimizations with the NVIDIA Command Line Profiler
 
 如要确保优化加速代码库的尝试真正取得成功，唯一方法便是分析应用程序以获取有关其性能的定量信息。`nvprof` 是指 NVIDIA 命令行分析器。该分析器附带于CUDA工具包中，能为加速应用程序分析提供强大功能。
@@ -93,7 +93,6 @@ nvprof ./a.out
 ```
 
 
----
 ## Streaming Multiprocessors and Querying the Device
 
 在硬件上，**NVIDIA GPU**包含称为流处理器或SM的功能单元，线程块均可安排在**SM**上运行，根据GPU数量以及线程块的要求，可以在SM上安排运行多个线程块。
@@ -151,20 +150,12 @@ nvcc -arch=sm_70 sm-optimized-vector-add/01-vector-add.cu -run
 nvprof ./a.out
 ```
 
----
+
 ## Unified Memory Details
 
 您一直使用 `cudaMallocManaged` 分配旨在供主机或设备代码使用的内存，并且现在仍在享受这种方法的便利之处，即在实现自动内存迁移且简化编程的同时，而无需深入了解 `cudaMallocManaged` 所分配**统一内存** (**UM**) 实际工作原理的详细信息。`nvprof` 提供有关加速应用程序中 UM 管理的详细信息，并在利用这些信息的同时结合对 UM 工作原理的更深入理解，进而为优化加速应用程序创造更多机会。
 
-以下幻灯片将直观呈现即将发布的材料的概要信息。点击浏览一遍这些幻灯片，然后再继续深入了解以下章节中的主题。
 
-
-```python
-%%HTML
-
-<div align="ce
-nter"><iframe src="https://view.officeapps.live.com/op/view.aspx?src=https://developer.download.nvidia.com/training/courses/C-AC-01-V1/AC_UM_NVPROF-zh/NVPROF_UM_2-zh.pptx" frameborder="0" width="900" height="550" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe></div>
-```
 
 ### Unified Memory Migration
 
@@ -231,10 +222,11 @@ nvcc -arch=sm_70 initialize-in-kernel/01-vector-add.cu -run
 nvprof ./a.out
 ```
 
----
+
+
 ## Asynchronous Memory Prefetching
 
-在主机到设备和设备到主机的内存传输过程中，我们使用一种技术来减少页错误和按需内存迁移成本，此强大技术称为**异步内存预取**。通过此技术，程序员可以在应用程序代码使用统一内存 (UM) 之前，在后台将其异步迁移至系统中的任何 CPU 或 GPU 设备。此举可以减少页错误和按需数据迁移所带来的成本，并进而提高 GPU 核函数和 CPU 函数的性能。
+在主机到设备和设备到主机的内存传输过程中，我们使用一种技术来减少页错误和按需内存迁移成本，此强大技术称为**异步内存预取**。通过此技术，程序员可以在应用程序代码使用统一内存 (UM) 之前，在后台将其异步迁移至**系统中的任何 CPU 或 GPU 设备**。此举可以减少页错误和按需数据迁移所带来的成本，并进而提高 GPU 核函数和 CPU 函数的性能。
 
 此外，预取往往会以更大的数据块来迁移数据，因此其迁移次数要低于按需迁移。此技术非常适用于以下情况：在运行时之前已知数据访问需求且数据访问并未采用稀疏模式。
 
@@ -251,42 +243,41 @@ cudaMemPrefetchAsync(pointerToSomeUMData, size, cudaCpuDeviceId); // Prefetch to
 
 ### Exercise: Prefetch Memory
 
-此时，实验中的 [01-vector-add.cu](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/01-vector-add/01-vector-add.cu) 程序不仅应启动 CUDA 核函数以将 2 个向量添加到第三个解向量（所有向量均通过 `cudaMallocManaged` 函数进行分配），还应在 CUDA 核函数中并行初始化其中的每个向量。如果某种原因导致应用程序不执行上述任何操作，则请参阅以下 [参考应用程序](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/08-prefetch/01-vector-add-prefetch.cu)，并更新自己的代码库以反映其当前功能。
+此时，实验中的 `01-vector-add.cu` 程序不仅应启动 CUDA 核函数以将 2 个向量添加到第三个解向量（所有向量均通过 `cudaMallocManaged` 函数进行分配），还应在 CUDA 核函数中并行初始化其中的每个向量。如果某种原因导致应用程序不执行上述任何操作，则请参阅`01-vector-add-prefetch.cu`，并更新自己的代码库以反映其当前功能。
 
-在 [01-vector-add.cu](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/01-vector-add/01-vector-add.cu) 应用程序中使用 `cudaMemPrefetchAsync` 函数开展 3 个实验，以探究其会对页错误和内存迁移产生何种影响。
+在 `01-vector-add.cu` 应用程序中使用 `cudaMemPrefetchAsync` 函数开展 3 个实验，以探究其会对页错误和内存迁移产生何种影响。
 
 - 当您将其中一个初始化向量预取到主机时会出现什么情况？
 - 当您将其中两个初始化向量预取到主机时会出现什么情况？
 - 当您将三个初始化向量全部预取到主机时会出现什么情况？
 
-在进行每个实验之前，请先假设 UM 的行为表现（尤其就页错误而言），以及其对所报告的初始化核函数运行时会产生何种影响，然后运行 `nvprof` 进行验证。如您遇到问题，请参阅 [解决方案](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/08-prefetch/solutions/01-vector-add-prefetch-solution.cu)。
+在进行每个实验之前，请先假设 UM 的行为表现（尤其就页错误而言），以及其对所报告的初始化核函数运行时会产生何种影响，然后运行 `nvprof` 进行验证。如您遇到问题，请参阅 [解决方案]`01-vector-add-prefetch-solution.cu`。
 
 
-```python
-!nvcc -arch=sm_70 -o prefetch-to-gpu 01-vector-add/01-vector-add.cu -run
+```shell
+nvcc -arch=sm_70 -o prefetch-to-gpu/01-vector-add.cu -run
 ```
 
 
-```python
-!nvprof ./prefetch-to-gpu
+```shell
+nvprof ./a.out
 ```
 
 ### Exercise: Prefetch Memory Back to the CPU
 
-请为该函数添加额外的内存预取回 CPU，以验证 `addVectorInto` 核函数的正确性。然后再次假设 UM 所受影响，并在 `nvprof` 中进行分析确认。如您遇到问题，请参阅 [解决方案](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/08-prefetch/solutions/02-vector-add-prefetch-solution-cpu-also.cu)。
+请为该函数添加额外的内存预取回 CPU，以验证 `addVectorInto` 核函数的正确性。然后再次假设 一致性内存 所受影响，并在 `nvprof` 中进行分析确认。如您遇到问题，请参阅 `02-vector-add-prefetch-solution-cpu-also.cu`。
 
 
-```python
-!nvcc -arch=sm_70 -o prefetch-to-cpu 01-vector-add/01-vector-add.cu -run
+```shell
+nvcc -arch=sm_70 prefetch-to-cpu/01-vector-add.cu -run
 ```
 
 
-```python
-!nvprof ./prefetch-to-cpu
+```shell
+nvprof ./a.out
 ```
 
----
-## Summary
+# Summary
 
 此时，您在实验中能够执行以下操作：
 
@@ -299,23 +290,22 @@ cudaMemPrefetchAsync(pointerToSomeUMData, size, cudaCpuDeviceId); // Prefetch to
 
 为巩固您的学习成果，并加强您通过迭代方式加速、优化及部署应用程序的能力，请继续完成本实验的最后一个练习。完成后，时间富余并有意深究的学习者可以继续学习*高阶内容*部分。
 
----
-## Final Exercise: Iteratively Optimize an Accelerated SAXPY Application
+# Final Exercise: Iteratively Optimize an Accelerated SAXPY Application
 
-[此处](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/09-saxpy/01-saxpy.cu) 为您提供一个基本的 [SAXPY](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Level_1) 加速应用程序。该程序目前包含一些您需要找到并修复的错误，在此之后您才能使用 `nvprof` 成功对其进行编译、运行和分析。
+`01-saxpy.cu` 为您提供一个基本的 [SAXPY](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Level_1) 加速应用程序。该程序目前包含一些您需要找到并修复的错误，在此之后您才能使用 `nvprof` 成功对其进行编译、运行和分析。
 
 在修复完错误并对应用程序进行分析后，您需记录 `saxpy` 核函数的运行时，然后采用*迭代方式*优化应用程序，并在每次迭代后使用 `nvprof` 进行分析验证，以便了解代码更改对核函数性能和 UM 行为产生的影响。
 
 运用本实验提供的各项技术。为获取学习支持，请充分利用 [提取努力](http://sites.gsu.edu/scholarlyteaching/effortful-retrieval/) 技术，而不要急于在本课程开始之初查阅技术细节。
 
-您的最终目标是在不修改 `N` 的情况下分析准确的 `saxpy` 核函数，以便在 *50us* 内运行。如您遇到问题，请参阅 [解决方案](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/09-saxpy/solutions/02-saxpy-solution.cu)，您亦可随时对其进行编译和分析。
+您的最终目标是在不修改 `N` 的情况下分析准确的 `saxpy` 核函数，以便在 *50us* 内运行。如您遇到问题，请参阅 `02-saxpy-solution.cu`，您亦可随时对其进行编译和分析。
 
 
-```python
-!nvcc -arch=sm_70 -o saxpy 09-saxpy/01-saxpy.cu -run
+```shell
+nvcc saxpy/01-saxpy.cu -run
 ```
 
 
-```python
-!nvprof ./saxpy
+```shell
+nvprof ./a.out
 ```

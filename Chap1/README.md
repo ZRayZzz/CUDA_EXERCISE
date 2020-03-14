@@ -30,7 +30,6 @@ To get the most out of this lab you should already be able to:
 - 处理 CUDA 代码生成的错误。
 - 加速 CPU 应用程序。
 
-
 ---
 ## Accelerated Systems
 
@@ -111,7 +110,6 @@ nvcc -arch=sm_70 -o hello-gpu 01-hello/01-hello-gpu.cu -run
 - 重构 `01-hello-gpu.cu`，以便 `Hello from the GPU` 在 `Hello from the CPU` **之前**打印。
 - 重构 `01-hello-gpu.cu`，以便 `Hello from the GPU` 打印**两次**，一次是在 `Hello from the CPU` **之前**，另一次是在 `Hello from the CPU` **之后**。
 
-
 ---
 ### Compiling and Running Accelerated CUDA Code
 
@@ -131,7 +129,6 @@ nvcc -arch=sm_70 -o hello-gpu 01-hello/01-hello-gpu.cu -run
 ---
 ## CUDA Thread Hierarchy
 GPU在线程(thread)中执行工作。线程的集合叫做块(block)，块的数量很多，给的核函数启动相关联的块的集合称为网格(grid)。GPU函数为核函数，其通过执行配置启动并定义了网格的块数、每个块的线程数。在网格中，每个块包含相同数量的线程。
-
 
 ---
 ## Launching Parallel Kernels
@@ -223,7 +220,6 @@ GPU由于某种未知原因，必须映射每个进程以处理向量中的元�
 
 公式`threadIdx.x + blockIdx.x * blockDim.x`可把每个线程映射到向量的元素中。
 
-
 ---
 ## Using Block Dimensions for More Parallelization
 
@@ -237,7 +233,6 @@ CUDA 核函数可以访问给出块中线程数的特殊变量：`blockDim.x`。
 - 如果线程块 `blockIdx.x` 等于 `1`，则 `blockIdx.x * blockDim.x` 为 `10`。向 `10` 添加可能的 `threadIdx.x` 值（`0` 至 `9`），之后便可在包含 100 个线程的网格内生成索引 `10` 至 `19`。
 - 如果线程块 `blockIdx.x` 等于 `5`，则 `blockIdx.x * blockDim.x` 为 `50`。向 `50` 添加可能的 `threadIdx.x` 值（`0` 至 `9`），之后便可在包含 100 个线程的网格内生成索引 `50` 至 `59`。
 - 如果线程块 `blockIdx.x` 等于 `9`，则 `blockIdx.x * blockDim.x` 为 `90`。向 `90` 添加可能的 `threadIdx.x` 值（`0` 至 `9`），之后便可在包含 100 个线程的网格内生成索引 `90` 至 `99`。
-
 
 ---
 ### Exercise: Accelerating a For Loop with Multiple Blocks of Threads
@@ -300,7 +295,6 @@ nvcc -arch=sm_70 -o double-elements 05-allocate/01-double-elements.cu -run
 
 ## Grid Size Work Amount Mismatch
 在之前的场景中，网格中的线程数与元素数量完全匹配。如果线程数超过要完成的工作量，尝试访问不存在的元素会导致运行时错误，这个时候就需要用`if`条件语句，确保`threadIdx.x + blockIdx.x * blockDim.x`计算出的`dataIndex`小于数据元素数量N
-
 
 ---
 ## Handling Block Configuration Mismatches to Number of Needed Threads

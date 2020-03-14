@@ -3,7 +3,7 @@
 此笔记是根据NVINDA CUDA COURSE总结而成的。
 
 ## Chapter 1: 
-[使用 CUDA C/C++ 加速应用程序](https://github.com/jokmingwong/NVIDIA_CUDA_COURSE/tree/master/Chap1)
+[使用 CUDA C/C++ 加速应用程序](Chap1/)
 
 加速计算正在取代 CPU 计算，成为最佳计算做法。加速计算带来的层出不穷的突破性进展、对加速应用程序日益增长的需求、轻松编写加速计算的编程规范以及支持加速计算的硬件的不断改进，所有这一切都在推动计算方式必然会过渡到加速计算。
 
@@ -18,9 +18,10 @@ To get the most out of this lab you should already be able to:
 - 在 C 中声明变量、编写循环并使用 if/else 语句。
 - 在 C 中定义和调用函数。
 - 在 C 中分配数组。
----
+
+
 ## Chapter 2: 
-[使用 CUDA C/C++ 统一内存和 nvprof 管理加速应用程序内存](https://github.com/jokmingwong/NVIDIA_CUDA_COURSE/tree/master/Chap2)
+[使用 CUDA C/C++ 统一内存和 nvprof 管理加速应用程序内存](Chap2/)
 
 对于本实验和其他 CUDA 基础实验，我们强烈建议您遵循 [*CUDA 最佳实践指南*](http://docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#memory-optimizations)，其中推荐一种称为 **APOD** 的设计周期：**评估**、**并行化**、**优化**和**部署**。简言之，APOD 规定一个迭代设计过程，开发人员能够在该过程中对其加速应用程序性能施以渐进式改进，并发布代码。随着开发人员的 CUDA 编程能力愈渐增强，他们已能在加速代码库中应用更先进的优化技术。
 
@@ -35,10 +36,17 @@ To get the most out of this lab you should already be able to:
 - 使用执行配置控制并行线程层次结构。
 - 重构串行循环以在 GPU 上并行执行其迭代。
 - 分配和释放统一内存。
----
+
+
 
 ## Chapter 3: 
-[异步流及使用 CUDA C/C++ 对加速应用程序开展可视化分析](https://github.com/jokmingwong/NVIDIA_CUDA_COURSE/tree/master/Chap3)
+[异步流及使用 CUDA C/C++ 对加速应用程序开展可视化分析](Chap3/)
+
+CUDA 工具包附带 **NVIDIA Visual Profiler**（或 **nvvp**），这是一款用于支持开发 CUDA 加速应用程序的强大 GUI 应用程序。nvvp 会生成加速应用程序的图解时间轴，其中包含有关 CUDA API 调用、核函数执行、内存活动和 **CUDA 流**使用情况的详细信息。
+
+此外，nvvp 还提供一套分析工具，开发人员可通过运行这些工具接收有关如何有效优化其加速应用程序的明智建议。CUDA 开发人员必须认真学习 nvvp。
+
+在本实验中，您将按照 nvvp 时间轴的指引以优化加速应用程序。此外，您还将学习一些中级 CUDA 编程技术来协助完成相关工作：**非托管内存分配和迁移**；**钉固**或**页锁定**主机内存；以及**非默认并发 CUDA 流**。
 
 
 
