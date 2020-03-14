@@ -94,7 +94,7 @@ int main()
 ---
 ### Exercise: Write a Hello GPU Kernel
 
-`01-hello-gpu`文件夹下的`01-hello-gpu.cu`包含已在运行的程序。其中包含两个函数，都有打印 `”Hello from the CPU\”` 消息。您的目标是重构源文件中的 `helloGPU()` 函数，以便该函数实际上在 GPU 上运行，并打印指示执行此操作的消息。参考答案也在同一个文件夹下面
+[01-hello-gpu.cu](hello-gpu\01-hello-gpu.cu)包含已在运行的程序。其中包含两个函数，都有打印 `”Hello from the CPU\”` 消息。您的目标是重构源文件中的 `helloGPU()` 函数，以便该函数实际上在 GPU 上运行，并打印指示执行此操作的消息。参考答案也在同一个文件夹下面
 
 
 ```shell
