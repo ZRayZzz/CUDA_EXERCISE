@@ -44,9 +44,3 @@ To get the most out of this lab you should already be able to:
 
 CUDA 工具包附带 **NVIDIA Visual Profiler**（或 **nvvp**），这是一款用于支持开发 CUDA 加速应用程序的强大 GUI 应用程序。nvvp 会生成加速应用程序的图解时间轴，其中包含有关 CUDA API 调用、核函数执行、内存活动和 **CUDA 流**使用情况的详细信息。
 
-此外，nvvp 还提供一套分析工具，开发人员可通过运行这些工具接收有关如何有效优化其加速应用程序的明智建议。CUDA 开发人员必须认真学习 nvvp。
-
-在本实验中，您将按照 nvvp 时间轴的指引以优化加速应用程序。此外，您还将学习一些中级 CUDA 编程技术来协助完成相关工作：**非托管内存分配和迁移**；**钉固**或**页锁定**主机内存；以及**非默认并发 CUDA 流**。
-
-
-
