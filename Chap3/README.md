@@ -1,7 +1,5 @@
 # 异步流及使用 CUDA C/C++ 对加速应用程序开展可视化分析
 
-
-
 CUDA 工具包附带 **NVIDIA Visual Profiler**（或 **nvvp**），这是一款用于支持开发 CUDA 加速应用程序的强大 GUI 应用程序。nvvp 会生成加速应用程序的图解时间轴，其中包含有关 CUDA API 调用、核函数执行、内存活动和 **CUDA 流**使用情况的详细信息。
 
 此外，nvvp 还提供一套分析工具，开发人员可通过运行这些工具接收有关如何有效优化其加速应用程序的明智建议。CUDA 开发人员必须认真学习 nvvp。
@@ -10,7 +8,6 @@ CUDA 工具包附带 **NVIDIA Visual Profiler**（或 **nvvp**），这是一款
 
 本实验学习课程结束时，我们将为您提供一份评估测试，让您加速和优化一款简单的 n-body 模拟器，这可让您借此展示在本课程学习期间所掌握的技能。若测试者能够在保持正确性的同时加速模拟器，我们将为其颁发证书以资证明。
 
----
 ## Prerequisites
 
 如要充分利用本实验，您应已能胜任如下任务：
@@ -32,37 +29,19 @@ CUDA 工具包附带 **NVIDIA Visual Profiler**（或 **nvvp**），这是一款
 - 利用 CUDA 流在加速应用程序中并发执行核函数。
 -（**可选高阶内容**）使用手动内存分配（包括分配钉固内存），以便在并发 CUDA 流中异步传输数据。
 
----
-## Setting Up the NVIDIA Visual Profiler
-
-点击 [此 nvvp 链接](/novnc) 以在另一个选项卡中打开 nvvp 会话。使用密码 `cuda` 建立连接，之后即可访问 nvvp。在下一节中，您将开始使用它分析 CUDA 代码。
-
-**注意：若学习者使用基于 Windows 的触屏笔记本电脑，则可能会在使用 nvvp 的过程中遇到一些问题。如遇到问题，您可通过使用 [Firefox 网络浏览器] 加以解决。**
-
-如果系统要求您使用工作空间，请只接受选定的默认工作空间。此后不久，nvvp 便会自动打开。
-
-无论在实验内何时出现 nvvp 连接超时，您只需点击连接按钮即可重新连接。
-
----
-## Comparing Code Refactors Iteratively with nvvp
-
-以下多个练习将帮助您熟悉与 nvvp 时间轴的交互。您将借助业已学习的技术来分析一系列经过迭代改进的程序。每次分析时，时间轴中的信息都会为您提供支持下一次迭代的相关信息。这将有助您进一步了解各种 CUDA 编程技术会对应用程序性能带来何种影响。
-
-完成本系列练习后，您将利用 nvvp 时间轴来协助学习新的 CUDA 编程技术，其中包括使用并发 CUDA 流以及非托管 CUDA 内存分配和复制技术。
 
 ### Exercise: Examine Timeline of Compiled CUDA Code
 
-[`01-vector-add.cu`](../../../../../edit/tasks/task1/task/03_AC_STREAMS_NVVP-zh/01-vector-add/01-vector-add.cu)（<--------点击这些源文件链接以在浏览器中编辑）包含一个可运行的加速向量加法应用程序。请使用下方的代码执行单元（可以通过 `CTRL` 点击执行该代码执行单元和本实验中的任何代码执行单元）进行编译和运行。您应能看到一则打印消息，表明已编译成功。
+`vector-add-no-prefetch.cu`包含一个可运行的加速向量加法应用程序。请使用下方的代码执行单元进行编译和运行。您应能看到一则打印消息，表明已编译成功。
 
-
-```python
-!nvcc -arch sm_70 -o vector-add-no-prefetch 01-vector-add/01-vector-add.cu -run
+```sh
+nvcc -arch sm_70 -o vector-add-no-prefetch vector-add-no-prefetch.cu -run
 ```
 
-成功编译应用程序后，请使用 [nvvp](/novnc) 打开已编译的可执行文件并最大化其时间轴窗口，然后执行以下操作：
+成功编译应用程序后，请使用 `nvvp`打开已编译的可执行文件并最大化其时间轴窗口，然后执行以下操作：
 
 - 创建将显示 `addVectorsInto` 核函数执行时间的时间轴标尺。
-- 确定应用程序时间轴中的何处发生 CPU 分页错误。确定 [应用程序源代码](../../../../../edit/tasks/task1/task/03_AC_STREAMS_NVVP-zh/01-vector-add/01-vector-add.cu) 中引起这些 CPU 分页错误的位置。
+- 确定应用程序时间轴中的何处发生 CPU 分页错误。确定 [应用程序源代码]`vector-add.cu`中引起这些 CPU 分页错误的位置。
 - 在时间轴中找到*数据迁移 (DtoH)*（设备到主机）事件。这些事件的发生时间几乎与核函数执行后发生 CPU 分页错误的时间相同。这些事件为何会在此时发生，而非在核函数执行前发生 CPU 分页错误期间？
 - GPU 分页错误、HtoD 数据迁移事件与 `addVectorsInto` 核函数执行之间在时间轴上有何关系？查看源代码后，您能否明确解释以上事件为何会以这种方式发生？
 
@@ -79,8 +58,8 @@ CUDA 工具包附带 **NVIDIA Visual Profiler**（或 **nvvp**），这是一款
 查看更改后，请使用下方的代码执行单元编译和运行重构后的应用程序。您应能看到打印出的成功消息。
 
 
-```python
-!nvcc -arch sm_70 -o vector-add-prefetch 01-vector-add/solutions/01-vector-add-prefetch-solution.cu -run
+```sh
+nvcc -arch sm_70 vector-add-prefetch/01-vector-add-prefetch-solution.cu -run
 ```
 
 使用 [nvvp](/novnc) 打开经编译的可执行文件，并在执行预取之前使先前的会话和向量加法应用程序保持开启状态。最大化时间轴窗口，然后执行以下操作：
@@ -104,8 +83,8 @@ CUDA 工具包附带 **NVIDIA Visual Profiler**（或 **nvvp**），这是一款
 查看更改后，请使用下方的代码执行单元编译和运行重构后的应用程序。您应能看到打印出的成功消息。
 
 
-```python
-!nvcc -arch=sm_70 -o init-kernel 02-init-kernel/solutions/01-init-kernel-solution.cu -run
+```sh
+nvcc -arch=sm_70 -o init-kernel 02-init-kernel/solutions/01-init-kernel-solution.cu -run
 ```
 
 在 nvvp 的另一个会话中打开经编译的可执行文件，然后执行以下操作：
@@ -126,8 +105,8 @@ CUDA 工具包附带 **NVIDIA Visual Profiler**（或 **nvvp**），这是一款
 查看更改后，请使用下方的代码执行单元编译和运行重构后的应用程序。您应能看到打印出的成功消息。
 
 
-```python
-!nvcc -arch=sm_70 -o prefetch-to-host 04-prefetch-check/solutions/01-prefetch-check-solution.cu -run
+```sh
+nvcc -arch=sm_70 prefetch-check/prefetch-check-solution.cu -run
 ```
 
 在 nvvp 中打开新编译的可执行文件，最大化时间轴并执行以下操作：
@@ -137,17 +116,14 @@ CUDA 工具包附带 **NVIDIA Visual Profiler**（或 **nvvp**），这是一款
   - 如何比较 DtoH 迁移所需的总时间？
 - 请查看时间轴的*流*部分以继续学习下一节。请注意，所有核函数均在*默认*流中执行，并且核函数是在默认流中顺次执行。我们将在下一节伊始介绍流的内容。
 
----
+
 ## Concurrent CUDA Streams
 
-以下幻灯片将直观呈现即将发布的材料的概要信息。点击浏览一遍这些幻灯片，然后再继续深入了解以下章节中的主题。
-
-
-```python
-%%HTML
-
-<div align="center"><iframe src="https://view.officeapps.live.com/op/view.aspx?src=https://developer.download.nvidia.com/training/courses/C-AC-01-V1/AC_STREAMS_NVVP-zh/NVVP-Streams-1-zh.pptx" frameborder="0" width="900" height="550" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe></div>
-```
+默认情况下，CUDA核函数会在默认流中运行。
+![](img/stream.png)
+在任何流中，其所含指令(包括核函数)必须在下一个流开始前完成。我们还可以创建非默认流，以便核函数执行。
+![](img/stream2.png)
+任一流中的核函数
 
 在 CUDA 编程中，**流**是按顺序执行的一系列命令。在 CUDA 应用程序中，核函数执行和一些内存传输均在 CUDA 流中进行。直至此时，您仍未正式使用 CUDA 流；但正如上次练习中 nvvp 时间轴所示，您的 CUDA 代码已在名为*默认流*的流中执行其核函数。
 
