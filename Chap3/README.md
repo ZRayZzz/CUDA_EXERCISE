@@ -123,11 +123,15 @@ nvcc -arch=sm_70 prefetch-check/prefetch-check-solution.cu -run
 ![](img/stream.png)
 在任何流中，其所含指令(包括核函数)必须在下一个流开始前完成。我们还可以创建非默认流，以便核函数执行。
 ![](img/stream2.png)
-任一流中的核函数
+任一流中的核函数均按顺序执行。
+
+
 
 在 CUDA 编程中，**流**是按顺序执行的一系列命令。在 CUDA 应用程序中，核函数执行和一些内存传输均在 CUDA 流中进行。直至此时，您仍未正式使用 CUDA 流；但正如上次练习中 nvvp 时间轴所示，您的 CUDA 代码已在名为*默认流*的流中执行其核函数。
 
 除默认流以外，CUDA 程序员还可创建并使用非默认 CUDA 流，此举可支持执行多个操作，例如在不同的流中并发执行多个核函数。多流的使用可以为您的加速应用程序带来另外一个层次的并行，并能提供更多应用程序优化机会。
+
+
 
 ### Rules Governing the Behavior of CUDA Streams
 
@@ -138,9 +142,12 @@ nvcc -arch=sm_70 prefetch-check/prefetch-check-solution.cu -run
 - 默认流会受到阻碍，并在其他所有流完成之后方可运行，但其亦会阻碍其他流的运行直至其自身已运行完毕。
 
 
+
 ### Creating, Utilizing, and Destroying Non-Default CUDA Streams
 
-以下代码片段演示了如何创建、利用和销毁非默认 CUDA 流。请注意：如要在非默认 CUDA 流中启动 CUDA 核函数，必须将流作为执行配置的第 4 个可选参数进行传递。目前为止，您只使用了执行配置的前 2 个参数：
+以下代码演示了如何创建、利用和销毁非默认 CUDA 流。
+
+请注意：如要在非默认 CUDA 流中启动 CUDA 核函数，必须将流作为执行配置的第 4 个可选参数进行传递。目前为止，您只使用了执行配置的前 2 个参数：
 
 ```cpp
 cudaStream_t stream;       // CUDA streams are of type `cudaStream_t`.
@@ -151,17 +158,17 @@ someKernel<<<number_of_blocks, threads_per_block, 0, stream>>>(); // `stream` is
 cudaStreamDestroy(stream); // Note that a value, not a pointer, is passed to `cudaDestroyStream`.
 ```
 
-执行配置的第 3 个可选参数虽已超出本实验的学习范围，但仍值得一提。此参数允许程序员提供**共享内存**（目前不会涉及的高阶主题）的字节数，以便在此核函数启动时按块进行动态分配。按块分配给共享内存的默认字节数为 `0`，在本实验的余下练习中，您会将 `0` 作为此值进行传递以揭示极为重要的第 4 个参数：
+执行配置的第 3 个可选参数虽已超出本实验的学习范围，但仍值得一提。此参数允许程序员提供**共享内存**的字节数，以便在此核函数启动时按块进行动态分配。按块分配给共享内存的默认字节数为 `0`，在本实验的余下练习中，您会将 `0` 作为此值进行传递以揭示极为重要的第 4 个参数：
 
 ### Exercise: Predict Default Stream Behavior
 
-[01-print-numbers](../../../../../edit/tasks/task1/task/03_AC_STREAMS_NVVP-zh/05-stream-intro/01-print-numbers.cu) 应用程序带有一个非常简单的 `printNumber` 核函数，可用于接受及打印整数。仅在单个线程块内使用单线程执行该核函数，但使用“for 循环”可执行 5 次，并且每次启动时都会传递“for 循环”的迭代次数。
+`print-number/01-print-numbers.cu` 应用程序带有一个非常简单的 `printNumber` 核函数，可用于接受及打印整数。仅在单个线程块内使用单线程执行该核函数，但使用“for 循环”可执行 5 次，并且每次启动时都会传递“for 循环”的迭代次数。
 
 使用下方的代码执行线程块编译和运行 [01-print-numbers](../../../../../edit/tasks/task1/task/03_AC_STREAMS_NVVP-zh/05-stream-intro/01-print-numbers.cu) 应用程序。您应能看到打印的数字 `0` 至 `4`。
 
 
-```python
-!nvcc -arch=sm_70 -o print-numbers 05-stream-intro/01-print-numbers.cu -run
+```shell
+nvcc -arch=sm_70 -o print-numbers 05-stream-intro/01-print-numbers.cu -run
 ```
 
 既已了解核函数在默认情况下会在默认流中执行，那么据您预计，`print-numbers` 程序的 5 次启动将会顺次执行还是会并行执行？您应能提及默认流的两个功能来支持您的回答。在 nvvp 的新会话中打开可执行文件并最大化时间轴，然后在核函数启动时进行放大以确认答案。
@@ -187,12 +194,13 @@ cudaStreamDestroy(stream); // Note that a value, not a pointer, is passed to `cu
 
 
 ```python
-!nvcc -arch=sm_70 -o init-in-streams 04-prefetch-check/solutions/01-prefetch-check-solution.cu -run
+nvcc -arch=sm_70 -o init-in-streams 04-prefetch-check/solutions/01-prefetch-check-solution.cu -run
 ```
 
 在 nvvp 中打开经编译的二进制文件并最大化时间轴，然后确认初始化核函数的 3 次启动均在其各自的非默认流中运行，并且具有一定程度的并发重叠。
 
----
+
+
 ## Summary
 
 此时，您在实验中能够执行以下操作：
@@ -242,7 +250,7 @@ cudaStreamDestroy(stream); // Note that a value, not a pointer, is passed to `cu
 ```
 
 
-```python
+```shell
 !nvprof ./nbody
 ```
 
@@ -252,7 +260,7 @@ cudaStreamDestroy(stream); // Note that a value, not a pointer, is passed to `cu
 
 在了解以下所列的各项技术后，您可尝试运用这些技术进一步优化 n-body 模拟。
 
----
+
 ## Manual Memory Allocation and Copying
 
 尽管 `cudaMallocManaged` 和 `cudaMemPrefetchAsync` 函数性能出众并能大幅简化内存迁移，但有时也有必要使用更多手动内存分配方法。这在已知只需在设备或主机上访问数据时尤其如此，并且因免于进行自动按需迁移而能够收回数据迁移成本。
