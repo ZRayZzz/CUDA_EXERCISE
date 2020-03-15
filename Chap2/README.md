@@ -1,9 +1,7 @@
 
 # 使用 CUDA C/C++ 统一内存和 nvprof 管理加速应用程序内存
 
-对于本实验和其他 CUDA 基础实验，我们强烈建议您遵循 [*CUDA 最佳实践指南*](http://docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#memory-optimizations)，其中推荐一种称为 **APOD** 的设计周期：**评估**、**并行化**、**优化**和**部署**。简言之，APOD 规定一个迭代设计过程，开发人员能够在该过程中对其加速应用程序性能施以渐进式改进，并发布代码。随着开发人员的 CUDA 编程能力愈渐增强，他们已能在加速代码库中应用更先进的优化技术。
-
-本实验将支持这种迭代开发风格。您将使用 **NVIDIA 命令行分析器**定性衡量应用程序性能及确定优化机会，之后您将应用渐进式改进，最后您会学习新技术并重复该周期。需重点关注的是，您将在本实验中学习及应用的众多技术均会涉及 CUDA **统一内存**工作原理的具体细节。理解统一内存行为是 CUDA 开发人员的一项基本技能，同时也可作为多项更先进内存管理技术的先决条件。
+本练习将支持这种迭代开发风格。您将使用 **NVIDIA 命令行分析器**定性衡量应用程序性能及确定优化机会，之后您将应用渐进式改进，最后您会学习新技术并重复该周期。需重点关注的是，您将在本实验中学习及应用的众多技术均会涉及 CUDA **统一内存**工作原理的具体细节。理解统一内存行为是 CUDA 开发人员的一项基本技能，同时也可作为多项更先进内存管理技术的先决条件。
 
 
 ## Prerequisites
@@ -38,7 +36,7 @@
 
 ### Exercise: Profile an Application with nvprof
 
-`01-vector-add.cu`是一个简单易用的加速向量加法程序。第一条命令将执行单元将编译（及运行）向量加法程序。第二条命令执行单元将运用 `nvprof` 分析刚编译好的可执行文件。
+[vector-add.cu](single-thread-vector-add/vector-add.cu)是一个简单易用的加速向量加法程序。第一条命令将执行单元将编译（及运行）向量加法程序。第二条命令执行单元将运用 `nvprof` 分析刚编译好的可执行文件。
 
 应用程序分析完毕后，请使用分析输出中显示的信息回答下列问题：
 
@@ -48,34 +46,34 @@
 
 
 ```shell
-nvcc -arch=sm_70 single-thread-vector-add/01-vector-add.cu -run
+nvcc -o vector-add single-thread-vector-add/vector-add.cu -run
 ```
 
 
 ```shell
-nvprof ./a.out
+nvprof ./vector-add
 ```
 
 ### Exercise: Optimize and Profile
 
-请抽出一到两分钟时间，更新 `01-vector-add.cu` 的执行配置以对其进行简单优化，以便其能在单个线程块中的多个线程上运行。请使用下方的代码执行单元重新编译并借助 `nvprof` 进行分析。使用分析输出检查核函数的运行时。此优化带来多大的速度提升？请务必在某处记录您的结果。
+请抽出一到两分钟时间，更改上述的`vector-add.cu`的执行配置以对其进行简单优化，以便其能在单个线程块中的多个线程上运行。请使用下方的代码执行单元重新编译并借助 `nvprof` 进行分析。使用分析输出检查核函数的运行时。此优化带来多大的速度提升？请务必在某处记录您的结果。
 
 
 ```shell
-nvcc -arch=sm_70 multi-thread-vector-add/01-vector-add.cu -run
+nvcc -o vector-add multi-thread-vector-add/vector-add.cu -run
 ```
 
 
 ```shell
-nvprof ./a.out
+nvprof ./vector-add
 ```
 
 ### Exercise: Optimize Iteratively
 
-在本练习中，您将经历数个周期，具体包括：编辑 `vector-add\01-vector-add.cu` 的执行配置、开展分析及记录结果以查看影响。开展操作时请依循以下指南：
+在本练习中，您将经历数个周期，具体包括：编辑 [vector-add.cu](multi-thread-vector-add/vector-add.cu) 的执行配置、开展分析及记录结果以查看影响。开展操作时请依循以下指南：
 
 - 首先列出您将用于更新执行配置的 3 至 5 种不同方法，确保涵盖一系列不同的网格和线程块大小组合。
-- 使用所列的其中一种方法编辑 `vector-add\01-vector-add.cu`程序。
+- 使用所列的其中一种方法编辑 `multi-thread-vector-add/vector-add.cu`程序。
 - 使用下方的两个代码执行单元编译和分析更新后的代码。
 - 记录核函数执行的运行时，应与分析输出中给出的相同。
 - 对以上列出的每个可能实现的优化重复执行编辑/分析/记录循环
@@ -84,12 +82,12 @@ nvprof ./a.out
 
 
 ```shell
-nvcc -arch=sm_70 iteratively-optimized-vector-add/01-vector-add.cu -run
+nvcc -o vector-add multi-thread-vector-add/vector-add.cu -run
 ```
 
 
 ```shell
-nvprof ./a.out
+nvprof ./vector-add
 ```
 
 
@@ -106,6 +104,7 @@ nvprof ./a.out
 运行 CUDA 应用程序的 GPU 具有称为**流多处理器**（或 **SM**）的处理单元。在核函数执行期间，将线程块提供给 SM 以供其执行。为支持 GPU 执行尽可能多的并行操作，您通常可以*选择线程块数量数倍于指定 GPU 上 SM 数量的网格大小*来提升性能。
 
 此外，SM 会在一个名为**线程束**的线程块内创建、管理、调度和执行包含 32 个线程的线程组。本课程将不会更[深入探讨 SM 和线程束](http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#hardware-implementation)，但值得注意的是，您也可*选择线程数量数倍于 32 的线程块大小*来提升性能。
+
 
 ### Programmatically Querying GPU Device Properties
 
@@ -125,30 +124,20 @@ cudaGetDeviceProperties(&props, deviceId); // `props` now has many useful proper
 
 ### Exercise: Query the Device
 
-目前，`get-device-properties/01-get-device-properties.cu`包含众多未分配的变量，并将打印一些无用信息，这些信息用于描述当前处于活动状态的 GPU 设备的详细信息。
+目前，[get-device-properties.cu](get-device-properties/get-device-properties.cu)包含众多未分配的变量，并将打印一些无用信息，这些信息用于描述当前处于活动状态的 GPU 设备的详细信息。
 
-扩建 `01-get-device-properties.cu` 以打印源代码中指示的所需设备属性的实际值。为获取操作支持并查看相关介绍，请参阅 [CUDA 运行时文档](http://docs.nvidia.com/cuda/cuda-runtime-api/structcudaDeviceProp.html) 以帮助识别设备属性结构中的相关属性。如您遇到问题，请参阅 [解决方案](01-get-device-properties-solution.cu)。
+扩建 `get-device-properties.cu` 以打印源代码中指示的所需设备属性的实际值。为获取操作支持并查看相关介绍，请参阅 [CUDA 运行时文档](http://docs.nvidia.com/cuda/cuda-runtime-api/structcudaDeviceProp.html) 以帮助识别设备属性结构中的相关属性。如遇到问题，请参阅 [解决方案](get-device-properties/get-device-properties-solution.cu)。
 
 
-```python
-!nvcc -arch=sm_70 get-device-properties/01-get-device-properties.cu -run
+```shell
+nvcc -o get-device-properties get-device-properties/get-device-properties.cu -run
 ```
 
 ### Exercise: Optimize Vector Add with Grids Sized to Number of SMs
 
-通过查询设备的 SM 数量重构您一直在 `01-vector-add.cu` 内执行的 `addVectorsInto` 核函数，以便其启动时的网格包含数倍于设备上 SM 数量的线程块数。
+通过查询设备的 SM 数量，重构您一直在之前练习所完成的 `multi-thread-vector-add/vector-add.cu` 内执行的 `addVectorsInto` 核函数，以便其启动时的网格包含数倍于设备上 SM 数量的线程块数。
 
 根据您所编写代码中的其他特定详细信息，此重构可能会或不会提高或大幅改善核函数的性能。因此，请务必始终使用 `nvprof`，以便定量评估性能变化。根据分析输出，记录目前所得结果和其他发现。
-
-
-```shell
-nvcc -arch=sm_70 sm-optimized-vector-add/01-vector-add.cu -run
-```
-
-
-```shell
-nvprof ./a.out
-```
 
 
 ## Unified Memory Details
@@ -171,55 +160,64 @@ nvprof ./a.out
 
 `nvprof` 会提供描述所分析应用程序 UM 行为的输出。在本练习中，您将对一款简易应用程序作出一些修改，并会在每次更改后利用 `nvprof` 的统一内存输出部分，探讨 UM 数据迁移的行为方式。
 
-[`01-page-faults.cu`](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/06-unified-memory-page-faults/01-page-faults.cu) 包含 `hostFunction` 和 `gpuKernel` 函数，我们可以通过这两个函数并使用数字 `1` 初始化 `2<<24` 单元向量的元素。主机函数和 GPU 核函数目前均未使用。
+[`page-faults.cu`](page-faults/page-faults.cu) 包含 `hostFunction` 和 `gpuKernel` 函数，我们可以通过这两个函数并使用数字 `1` 初始化 `2<<24` 单元向量的元素。主机函数和 GPU 核函数目前均未使用。
 
-对于以下 4 个问题中的每一问题，请根据您对 UM 行为的理解，首先假设应会发生何种页错误，然后使用代码库中所提供 2 个函数中的其中一个或同时使用这两个函数编辑 [`01-page-faults.cu`](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/06-unified-memory-page-faults/01-page-faults.cu) 以创建场景，以便您测试假设。
+对于以下 4 个问题中的每一问题，请根据您对 UM 行为的理解，首先假设应会发生何种页错误，然后使用代码库中所提供 2 个函数中的其中一个或同时使用这两个函数编辑 `page-faults.cu` 以创建场景，以便您测试假设。
 
 如要测试您的假设，请使用下方的代码执行单元编译及分析您的代码。请务必针对您正进行的 4 个实验，记录您的假设以及从 `nvprof` 输出中获取的结果，尤其是 CPU 和 GPU 页错误。如您遇到问题，可点击以下链接获取 4 个实验中每个实验的参考解决方案。
 
-- 当统一内存仅由 CPU 访问时会出现什么情况？（[解决方案](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/06-unified-memory-page-faults/solutions/01-page-faults-solution-cpu-only.cu)）
-- 当统一内存仅由 GPU 访问时会出现什么情况？（[解决方案](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/06-unified-memory-page-faults/solutions/02-page-faults-solution-gpu-only.cu)）
-- 当统一内存先由 CPU 访问后由 GPU 访问时会出现什么情况？（[解决方案](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/06-unified-memory-page-faults/solutions/03-page-faults-solution-cpu-then-gpu.cu)）
-- 当统一内存先由 GPU 访问后由 CPU 访问时会出现什么情况？（[解决方案](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/06-unified-memory-page-faults/solutions/04-page-faults-solution-gpu-then-cpu.cu)）
+- 当统一内存仅由 CPU 访问时会出现什么情况？
+
+- 当统一内存仅由 GPU 访问时会出现什么情况？
+
+- 当统一内存先由 CPU 访问后由 GPU 访问时会出现什么情况？（[解决方案](page-faults/pages-faults-cpu-then-gpu.cu)）
+- 当统一内存先由 GPU 访问后由 CPU 访问时会出现什么情况？（[解决方案](page-faults/pages-faults-gpu-then-cpu.cu)）
 
 
 ```shell
-nvcc -arch=sm_70 page-faults/01-page-faults.cu -run
+nvcc -o page-faults page-faults/page-faults.cu -run
 ```
 
 
 ```shell
-nvprof ./a.out
+nvprof ./page-faults
 ```
+
 
 ### Exercise: Revisit UM Behavior for Vector Add Program
 
-返回您一直在本实验中执行的 [01-vector-add.cu](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/01-vector-add/01-vector-add.cu) 程序，查看程序在当前状态下的代码库，并假设您期望发生何种页错误。查看上一个重构的分析输出（可通过向上滚动查找输出或通过执行下方的代码执行单元进行查看），并观察分析器输出的统一内存部分。您可否根据代码库的内容对页错误描述作一解释？
+返回您一直在本实验中执行的 `multi-thread-vector-add/vector-add.cu` 程序，查看程序在当前状态下的代码库，并假设您期望发生何种页错误。查看上一个重构的分析输出（可通过向上滚动查找输出或通过执行下方的代码执行单元进行查看），并观察分析器输出的统一内存部分。您可否根据代码库的内容对页错误描述作一解释？
 
 
 ```shell
-nvprof ./a.out
+nvprof ./vector-add
 ```
+
 
 ### Exercise: Initialize Vector in Kernel
 
 当 `nvprof` 给出核函数所需的执行时间时，则在此函数执行期间发生的主机到设备页错误和数据迁移都会包含在所显示的执行时间中。
 
-带着这样的想法来将 [01-vector-add.cu](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/01-vector-add/01-vector-add.cu) 程序中的 `initWith` 主机函数重构为 CUDA 核函数，以便在 GPU 上并行初始化所分配的向量。成功编译及运行重构的应用程序后，但在对其进行分析之前，请假设如下内容：
+带着这样的想法来将之前已经完成的`vector-add.cu`程序中的 `initWith` 主机函数重构为 CUDA 核函数，以便在 GPU 上并行初始化所分配的向量。
+
+如果某种原因导致应用程序不执行上述任何操作，则请参阅[initialize-in-kernel-vector-add.cu](initialize-in-kernel-vector-add\initialize-in-kernel-vector-add.cu)，并更新自己的代码库以反映其当前功能。
+
+成功编译及运行重构的应用程序后，但在对其进行分析之前，请假设如下内容：
 
 - 您期望重构会对 UM 页错误行为产生何种影响？
 - 您期望重构会对所报告的 `addVectorsInto` 运行时产生何种影响？
 
-请再次记录结果。如您遇到问题，请参阅 [解决方案](../../../../../edit/tasks/task1/task/02_AC_UM_NVPROF-zh/07-init-in-kernel/solutions/01-vector-add-init-in-kernel-solution.cu)。
+请再次记录结果。如遇到问题，请参阅 [解决方案](initialize-in-kernel-vector-add\vector-add-init-in-kernel-solution.cu)。
 
 
 ```shell
-nvcc -arch=sm_70 initialize-in-kernel/01-vector-add.cu -run
+nvcc -o  vector-add
+multi-thread-vector-add/vector-add.cu -run
 ```
 
 
 ```shell
-nvprof ./a.out
+nvprof ./vector-add
 ```
 
 
@@ -243,38 +241,38 @@ cudaMemPrefetchAsync(pointerToSomeUMData, size, cudaCpuDeviceId); // Prefetch to
 
 ### Exercise: Prefetch Memory
 
-此时，实验中的 `01-vector-add.cu` 程序不仅应启动 CUDA 核函数以将 2 个向量添加到第三个解向量（所有向量均通过 `cudaMallocManaged` 函数进行分配），还应在 CUDA 核函数中并行初始化其中的每个向量。如果某种原因导致应用程序不执行上述任何操作，则请参阅`01-vector-add-prefetch.cu`，并更新自己的代码库以反映其当前功能。
+此时，上述实验中的 `vector-add.cu` 程序不仅应启动 CUDA 核函数以将 2 个向量添加到第三个解向量（所有向量均通过 `cudaMallocManaged` 函数进行分配），还应在 CUDA 核函数中并行初始化其中的每个向量。如果某种原因导致应用程序不执行上述任何操作，则请参阅[prefetch-to-gpu\vector-add-prefetch.cu](prefetch-to-gpu\vector-add-prefetch.cu)，并更新自己的代码库以反映其当前功能。
 
-在 `01-vector-add.cu` 应用程序中使用 `cudaMemPrefetchAsync` 函数开展 3 个实验，以探究其会对页错误和内存迁移产生何种影响。
+在 `vector-add.cu` 应用程序中使用 `cudaMemPrefetchAsync` 函数开展 3 个实验，以探究其会对页错误和内存迁移产生何种影响。
 
 - 当您将其中一个初始化向量预取到主机时会出现什么情况？
 - 当您将其中两个初始化向量预取到主机时会出现什么情况？
 - 当您将三个初始化向量全部预取到主机时会出现什么情况？
 
-在进行每个实验之前，请先假设 UM 的行为表现（尤其就页错误而言），以及其对所报告的初始化核函数运行时会产生何种影响，然后运行 `nvprof` 进行验证。如您遇到问题，请参阅 [解决方案]`01-vector-add-prefetch-solution.cu`。
+在进行每个实验之前，请先假设 UM 的行为表现（尤其就页错误而言），以及其对所报告的初始化核函数运行时会产生何种影响，然后运行 `nvprof` 进行验证。如您遇到问题，请参阅 [解决方案](prefetch-to-gpu/vector-add-prefetch-solution.cu)。
 
 
 ```shell
-nvcc -arch=sm_70 -o prefetch-to-gpu/01-vector-add.cu -run
+nvcc -o vector-add vector-add.cu -run
 ```
 
 
 ```shell
-nvprof ./a.out
+nvprof ./vector-add
 ```
 
 ### Exercise: Prefetch Memory Back to the CPU
 
-请为该函数添加额外的内存预取回 CPU，以验证 `addVectorInto` 核函数的正确性。然后再次假设 一致性内存 所受影响，并在 `nvprof` 中进行分析确认。如您遇到问题，请参阅 `02-vector-add-prefetch-solution-cpu-also.cu`。
+请为该函数添加额外的内存预取回 CPU，以验证 `addVectorInto` 核函数的正确性。然后再次假设 一致性内存 所受影响，并在 `nvprof` 中进行分析确认。如您遇到问题，请参阅 [解决方案](prefetch-to-gpu\vector-add-prefetch-solution-cpu-also.cu)。
 
 
 ```shell
-nvcc -arch=sm_70 prefetch-to-cpu/01-vector-add.cu -run
+nvcc -o vector-add vector-add.cu -run
 ```
 
 
 ```shell
-nvprof ./a.out
+nvprof ./vector-add
 ```
 
 # Summary
@@ -292,20 +290,20 @@ nvprof ./a.out
 
 # Final Exercise: Iteratively Optimize an Accelerated SAXPY Application
 
-`01-saxpy.cu` 为您提供一个基本的 [SAXPY](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Level_1) 加速应用程序。该程序目前包含一些您需要找到并修复的错误，在此之后您才能使用 `nvprof` 成功对其进行编译、运行和分析。
+[saxpy.cu](saxpy\saxpy.cu) 为您提供一个基本的 [SAXPY](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Level_1) 加速应用程序。该程序目前包含一些您需要找到并修复的错误，在此之后您才能使用 `nvprof` 成功对其进行编译、运行和分析。
 
 在修复完错误并对应用程序进行分析后，您需记录 `saxpy` 核函数的运行时，然后采用*迭代方式*优化应用程序，并在每次迭代后使用 `nvprof` 进行分析验证，以便了解代码更改对核函数性能和 UM 行为产生的影响。
 
 运用本实验提供的各项技术。为获取学习支持，请充分利用 [提取努力](http://sites.gsu.edu/scholarlyteaching/effortful-retrieval/) 技术，而不要急于在本课程开始之初查阅技术细节。
 
-您的最终目标是在不修改 `N` 的情况下分析准确的 `saxpy` 核函数，以便在 *50us* 内运行。如您遇到问题，请参阅 `02-saxpy-solution.cu`，您亦可随时对其进行编译和分析。
+您的最终目标是在不修改 `N` 的情况下分析准确的 `saxpy` 核函数，以便在 *50us* 内运行。如您遇到问题，请参阅 [解决方案](saxpy\saxpy-solution.cu)或[manual memory解决方案](saxpy\saxpy-solution-manual-memory.cu)，您亦可随时对其进行编译和分析。
 
 
 ```shell
-nvcc saxpy/01-saxpy.cu -run
+nvcc -o saxpy saxpy/saxpy.cu -run
 ```
 
 
 ```shell
-nvprof ./a.out
+nvprof ./saxpy
 ```
