@@ -4,14 +4,11 @@ CUDA 工具包附带 **NVIDIA Visual Profiler**（或 **nvvp**），这是一款
 
 此外，nvvp 还提供一套分析工具，开发人员可通过运行这些工具接收有关如何有效优化其加速应用程序的明智建议。CUDA 开发人员必须认真学习 nvvp。
 
-在本实验中，您将按照 nvvp 时间轴的指引以优化加速应用程序。此外，您还将学习一些中级 CUDA 编程技术来协助完成相关工作：**非托管内存分配和迁移**；**钉固**或**页锁定**主机内存；以及**非默认并发 CUDA 流**。
+在本练习中将按照 nvvp 时间轴的指引以优化加速应用程序。此外，您还将学习一些中级 CUDA 编程技术来协助完成相关工作：**非托管内存分配和迁移**；**钉固**或**页锁定**主机内存；以及**非默认并发 CUDA 流**。
 
-本实验学习课程结束时，我们将为您提供一份评估测试，让您加速和优化一款简单的 n-body 模拟器，这可让您借此展示在本课程学习期间所掌握的技能。若测试者能够在保持正确性的同时加速模拟器，我们将为其颁发证书以资证明。
+本实验学习课程结束时，将加速和优化一款简单的 n-body 模拟器，这可让您借此展示在本课程学习期间所掌握的技能。若测试者能够在保持正确性的同时加速模拟器，我们将为其颁发证书以资证明。
 
 ## Prerequisites
-
-如要充分利用本实验，您应已能胜任如下任务：
-
 - 编写、编译及运行既可调用 CPU 函数也可启动 GPU 核函数的 C/C++ 程序。
 - 使用执行配置控制并行线程层次结构。
 - 重构串行循环以在 GPU 上并行执行其迭代。
@@ -21,9 +18,6 @@ CUDA 工具包附带 **NVIDIA Visual Profiler**（或 **nvvp**），这是一款
 
 
 ## Objectives
-
-当您在本实验完成学习后，您将能够：
-
 - 使用 **NVIDIA Visual Profiler** (**nvvp**) 对 GPU 加速 CUDA 应用程序的时间轴进行可视化分析。
 - 借助 nvvp 识别并利用 GPU 加速 CUDA 应用程序中存在的优化机会。
 - 利用 CUDA 流在加速应用程序中并发执行核函数。
@@ -32,37 +26,37 @@ CUDA 工具包附带 **NVIDIA Visual Profiler**（或 **nvvp**），这是一款
 
 ### Exercise: Examine Timeline of Compiled CUDA Code
 
-`vector-add-no-prefetch.cu`包含一个可运行的加速向量加法应用程序。请使用下方的代码执行单元进行编译和运行。您应能看到一则打印消息，表明已编译成功。
+[vector-add-no-prefetch.cu](vector-add-no-prefetch\vector-add-no-prefetch.cu)包含一个可运行的加速向量加法应用程序。请使用下方的代码执行单元进行编译和运行。您应能看到一则打印消息，表明已编译成功。
 
 ```sh
-nvcc -arch sm_70 -o vector-add-no-prefetch vector-add-no-prefetch.cu -run
+nvcc -o vector-add-no-prefetch vector-add-no-prefetch.cu -run
 ```
 
 成功编译应用程序后，请使用 `nvvp`打开已编译的可执行文件并最大化其时间轴窗口，然后执行以下操作：
 
 - 创建将显示 `addVectorsInto` 核函数执行时间的时间轴标尺。
-- 确定应用程序时间轴中的何处发生 CPU 分页错误。确定 [应用程序源代码]`vector-add.cu`中引起这些 CPU 分页错误的位置。
+- 确定应用程序时间轴中的何处发生 CPU 分页错误。确定`vector-add.cu`中引起这些 CPU 分页错误的位置。
 - 在时间轴中找到*数据迁移 (DtoH)*（设备到主机）事件。这些事件的发生时间几乎与核函数执行后发生 CPU 分页错误的时间相同。这些事件为何会在此时发生，而非在核函数执行前发生 CPU 分页错误期间？
 - GPU 分页错误、HtoD 数据迁移事件与 `addVectorsInto` 核函数执行之间在时间轴上有何关系？查看源代码后，您能否明确解释以上事件为何会以这种方式发生？
 
 ### Exercise: Add Asynchronous Prefetching
 
-[`01-vector-add-prefetch-solution.cu`](../../../../../edit/tasks/task1/task/03_AC_STREAMS_NVVP-zh/01-vector-add/solutions/01-vector-add-prefetch-solution.cu) 可重构上述向量加法应用程序，以便在启动核函数之前将其 `addVectorsInto` 核函数所需的 3 个向量异步预取到处于活动状态的 GPU 设备（通过使用 [`cudaMemPrefetchAsync`](http://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__MEMORY.html#group__CUDART__MEMORY_1ge8dc9199943d421bc8bc7f473df12e42)）。打开源代码并确定在应用程序中的何处作出这些更改。
+[vector-add-prefetch-solution.cu](vector-add-prefetch\vector-add-prefetch-solution.cu) 可重构上述向量加法应用程序，以便在启动核函数之前将其 `addVectorsInto` 核函数所需的 3 个向量异步预取到处于活动状态的 GPU 设备（通过使用 [`cudaMemPrefetchAsync`](http://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__MEMORY.html#group__CUDART__MEMORY_1ge8dc9199943d421bc8bc7f473df12e42)）。打开源代码并确定在应用程序中的何处作出这些更改。
 
 查看更改后，请使用下方的代码执行单元编译和运行重构后的应用程序。您应能看到打印出的成功消息。
 
 ### Exercise: Compare the Timelines of Prefetching vs. Non-Prefetching
 
-[`01-vector-add-prefetch-solution.cu`](../../../../../edit/tasks/task1/task/03_AC_STREAMS_NVVP-zh/01-vector-add/solutions/01-vector-add-prefetch-solution.cu) 可重构上述向量加法应用程序，以便在启动核函数之前将其 `addVectorsInto` 核函数所需的 3 个向量异步预取到处于活动状态的 GPU 设备（通过使用 [`cudaMemPrefetchAsync`](http://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__MEMORY.html#group__CUDART__MEMORY_1ge8dc9199943d421bc8bc7f473df12e42)）。打开源代码并确定在应用程序中的何处作出这些更改。
+上述`vector-add-prefetch-solution.cu`可重构上述向量加法应用程序，以便在启动核函数之前将其 `addVectorsInto` 核函数所需的 3 个向量异步预取到处于活动状态的 GPU 设备（通过使用 [`cudaMemPrefetchAsync`](http://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__MEMORY.html#group__CUDART__MEMORY_1ge8dc9199943d421bc8bc7f473df12e42)）。打开源代码并确定在应用程序中的何处作出这些更改。
 
 查看更改后，请使用下方的代码执行单元编译和运行重构后的应用程序。您应能看到打印出的成功消息。
 
 
 ```sh
-nvcc -arch sm_70 vector-add-prefetch/01-vector-add-prefetch-solution.cu -run
+nvcc -o vector-add-prefetch vector-add-prefetch-solution.cu -run
 ```
 
-使用 [nvvp](/novnc) 打开经编译的可执行文件，并在执行预取之前使先前的会话和向量加法应用程序保持开启状态。最大化时间轴窗口，然后执行以下操作：
+使用 `nvvp` 打开经编译的可执行文件，并在执行预取之前使先前的会话和向量加法应用程序保持开启状态。最大化时间轴窗口，然后执行以下操作：
 
 - 创建将显示 `addVectorsInto` 核函数执行时间的时间轴标尺。在添加异步预取之前，如何将执行时间与 `addVectorsInto` 核函数的执行时间进行比较？
 - 在时间轴的*运行时 API* 部分中找到 `cudaMemPrefetchAsync`。
@@ -76,7 +70,7 @@ nvcc -arch sm_70 vector-add-prefetch/01-vector-add-prefetch-solution.cu -run
 
 在向量加法应用程序的上一次迭代中，向量数据正在 CPU 上进行初始化，因此在 `addVectorsInto` 核函数可以对该数据执行操作之前需要将其迁移到 GPU。
 
-在应用程序 [01-init-kernel-solution.cu](../../../../../edit/tasks/task1/task/03_AC_STREAMS_NVVP-zh/02-init-kernel/solutions/01-init-kernel-solution.cu) 的下一次迭代中，我们已将应用程序重构为在 GPU 上并行初始化数据。
+在应用程序 [init-kernel-solution.cu](init-kernel-solution\init-kernel-solution.cu) 的下一次迭代中，我们已将应用程序重构为在 GPU 上并行初始化数据。
 
 由于初始化目前在 GPU 上进行，因此预取操作已在初始化之前完成，而非在执行向量加法操作之前。查看源代码以确定作出这些更改的位置。
 
@@ -84,7 +78,7 @@ nvcc -arch sm_70 vector-add-prefetch/01-vector-add-prefetch-solution.cu -run
 
 
 ```sh
-nvcc -arch=sm_70 -o init-kernel 02-init-kernel/solutions/01-init-kernel-solution.cu -run
+nvcc -o init-kernel init-kernel-solution.cu -run
 ```
 
 在 nvvp 的另一个会话中打开经编译的可执行文件，然后执行以下操作：
@@ -100,13 +94,13 @@ nvcc -arch=sm_70 -o init-kernel 02-init-kernel/solutions/01-init-kernel-solution
 
 ### Exercise: Profile Refactor with Asynchronous Prefetch Back to the Host
 
-目前，向量加法应用程序可以在主机上验证向量加法核函数的结果。在应用程序 [01-prefetch-check-solution.cu](../../../../../edit/tasks/task1/task/03_AC_STREAMS_NVVP-zh/04-prefetch-check/solutions/01-prefetch-check-solution.cu) 的下一次重构中，我们会将数据异步预取回主机以进行验证。
+目前，向量加法应用程序可以在主机上验证向量加法核函数的结果。在应用程序 [prefetch-check.cu](prefetch-check\prefetch-check.cu) 的下一次重构中，我们会将数据异步预取回主机以进行验证。
 
 查看更改后，请使用下方的代码执行单元编译和运行重构后的应用程序。您应能看到打印出的成功消息。
 
 
 ```sh
-nvcc -arch=sm_70 prefetch-check/prefetch-check-solution.cu -run
+nvcc -o prefetch-check prefetch-check.cu -run
 ```
 
 在 nvvp 中打开新编译的可执行文件，最大化时间轴并执行以下操作：
@@ -164,11 +158,11 @@ cudaStreamDestroy(stream); // Note that a value, not a pointer, is passed to `cu
 
 `print-number/01-print-numbers.cu` 应用程序带有一个非常简单的 `printNumber` 核函数，可用于接受及打印整数。仅在单个线程块内使用单线程执行该核函数，但使用“for 循环”可执行 5 次，并且每次启动时都会传递“for 循环”的迭代次数。
 
-使用下方的代码执行线程块编译和运行 [01-print-numbers](../../../../../edit/tasks/task1/task/03_AC_STREAMS_NVVP-zh/05-stream-intro/01-print-numbers.cu) 应用程序。您应能看到打印的数字 `0` 至 `4`。
+使用下方的代码执行线程块编译和运行 [print-numbers.cu](print-numbers/print-numbers.cu) 应用程序。您应能看到打印的数字 `0` 至 `4`。
 
 
 ```shell
-nvcc -arch=sm_70 -o print-numbers 05-stream-intro/01-print-numbers.cu -run
+nvcc  -o print-numbers print-numbers/print-numbers.cu -run
 ```
 
 既已了解核函数在默认情况下会在默认流中执行，那么据您预计，`print-numbers` 程序的 5 次启动将会顺次执行还是会并行执行？您应能提及默认流的两个功能来支持您的回答。在 nvvp 的新会话中打开可执行文件并最大化时间轴，然后在核函数启动时进行放大以确认答案。
@@ -177,11 +171,11 @@ nvcc -arch=sm_70 -o print-numbers 05-stream-intro/01-print-numbers.cu -run
 
 由于核函数的所有 5 次启动均在同一个流中发生，因此看到 5 个核函数顺次执行也就不足为奇。此外，也可以这么说，由于默认流受到阻碍，所以核函数的每次启动都会在完成之后才启动下一次，而事实也是如此。
 
-重构 [01-print-numbers](../../../../../edit/tasks/task1/task/03_AC_STREAMS_NVVP-zh/05-stream-intro/01-print-numbers.cu) 应用程序，以便核函数的每次启动都在自身非默认流中进行。若已不再需要所创建的流，请务必予以销毁。请使用下方的代码执行单元编译和运行经重构的代码。您应仍能看到打印的数字 `0` 至 `4`，不过这些数字不一定会按升序排列。如您遇到问题，请参阅 [解决方案](../../../../../edit/tasks/task1/task/03_AC_STREAMS_NVVP-zh/05-stream-intro/solutions/01-print-numbers-solution.cu)。
+重构上述`print-numbers` 应用程序，以便核函数的每次启动都在自身非默认流中进行。若已不再需要所创建的流，请务必予以销毁。请使用下方的代码执行单元编译和运行经重构的代码。您应仍能看到打印的数字 `0` 至 `4`，不过这些数字不一定会按升序排列。如您遇到问题，请参阅 [解决方案](print-numbers\print-numbers-solution.cu)。
 
 
-```python
-!nvcc -arch=sm_70 -o print-numbers-in-streams 05-stream-intro/01-print-numbers.cu -run
+```shell
+nvcc -o print-numbers print-numbers/print-numbers.cu -run
 ```
 
 您既已为核函数的 5 次启动使用 5 个不同的非默认流，您预计它们会顺次执行还是会并行执行？除目前对流的了解之外，您还需考虑 `printNumber` 核函数的简单程度，也就是说，即使您预测并行运行，核函数的完成速度是否仍会允许完全重叠？
@@ -190,11 +184,11 @@ nvcc -arch=sm_70 -o print-numbers 05-stream-intro/01-print-numbers.cu -run
 
 ### Exercise: Use Streams for Concurrent Data Initialization Kernels
 
-您一直使用的向量加法应用程序 [01-prefetch-check-solution.cu](../../../../../edit/tasks/task1/task/03_AC_STREAMS_NVVP-zh/04-prefetch-check/solutions/01-prefetch-check-solution.cu) 目前启动 3 次初始化核函数，即：为 `vectorAdd` 核函数需要初始化的 3 个向量分别启动一次。重构该应用程序，以便在其各自的非默认流中启动全部 3 个初始化核函数。在使用下方的代码执行单元编译及运行时，您应仍能看到打印的成功消息。如您遇到问题，请参阅 [解决方案](../../../../../edit/tasks/task1/task/03_AC_STREAMS_NVVP-zh/06-stream-init/solutions/01-stream-init-solution.cu)。
+[stream-init.cu](init-in-streams\stream-init.cu) 目前启动 3 次初始化核函数，即：为 `vectorAdd` 核函数需要初始化的 3 个向量分别启动一次。重构该应用程序，以便在其各自的非默认流中启动全部 3 个初始化核函数。在使用下方的代码执行单元编译及运行时，您应仍能看到打印的成功消息。如您遇到问题，请参阅 [解决方案](init-in-streams\stream-init-solution.cu)。
 
 
-```python
-nvcc -arch=sm_70 -o init-in-streams 04-prefetch-check/solutions/01-prefetch-check-solution.cu -run
+```shell
+nvcc  -o init-in-streams init-in-streams/stream-init-solution.cu -run
 ```
 
 在 nvvp 中打开经编译的二进制文件并最大化时间轴，然后确认初始化核函数的 3 次启动均在其各自的非默认流中运行，并且具有一定程度的并发重叠。
@@ -212,10 +206,10 @@ nvcc -arch=sm_70 -o init-in-streams 04-prefetch-check/solutions/01-prefetch-chec
 
 现在，您已经掌握大量基本工具和技术，可用来加速 CPU 应用程序，并能进一步对这些加速应用程序进行优化。在最后的练习中，您将有机会运用所学的全部知识加速 [n-body](https://en.wikipedia.org/wiki/N-body_problem) 模拟器，以预测通过引力相互作用的一组物体的个体运动。
 
----
+
 ## Final Exercise: Accelerate and Optimize an N-Body Simulator
 
-[n-body](https://en.wikipedia.org/wiki/N-body_problem) 模拟器可以预测通过引力相互作用的一组物体的个体运动。[01-nbody.cu](../../../../../edit/tasks/task1/task/03_AC_STREAMS_NVVP-zh/09-nbody/01-nbody.cu) 包含一个简单而有效的 n-body 模拟器，适合用于在三维空间移动的物体。我们可通过向该应用程序传递一个命令行参数以影响系统中的物体数量。
+[n-body](https://en.wikipedia.org/wiki/N-body_problem) 模拟器可以预测通过引力相互作用的一组物体的个体运动。[nbody.cu](n-body\n-body.cu) 包含一个简单而有效的 n-body 模拟器，适合用于在三维空间移动的物体。我们可通过向该应用程序传递一个命令行参数以影响系统中的物体数量。
 
 该应用程序现有的 CPU 版能够处理 4096 个物体，在计算系统中物体间的交互次数时，每秒约达 3000 万次。您的任务是：
 
@@ -240,18 +234,18 @@ nvcc -arch=sm_70 -o init-in-streams 04-prefetch-check/solutions/01-prefetch-chec
 快去开心地执行任务吧！
 
 
-```python
-!nvcc -arch=sm_70 -o nbody 09-nbody/01-nbody.cu
-```
-
-
-```python
-!./nbody 11 # This argument is passed as `N` in the formula `2<<N`, to determine the number of bodies in the system
+```shell
+nvcc -o nbody nbody/nbody.cu
 ```
 
 
 ```shell
-!nvprof ./nbody
+./nbody 11 # This argument is passed as `N` in the formula `2<<N`, to determine the number of bodies in the system
+```
+
+
+```shell
+nvprof ./nbody
 ```
 
 ## Advanced Content
@@ -300,20 +294,20 @@ cudaFreeHost(host_a);          // Free pinned memory like this.
 
 ### Exercise: Manually Allocate Host and Device Memory
 
-向量加法应用程序 [01-stream-init-solution](../../../../../edit/tasks/task1/task/03_AC_STREAMS_NVVP-zh/06-stream-init/solutions/01-stream-init-solution.cu) 的最新迭代使用 `cudaMallocManaged` 命令首先分配初始化核函数在设备上使用的托管内存，然后依次分配向量加法核函数在设备上所用以及主机所用的托管内存，其中内存均采用自动传输以进行验证。这是种方法很明智，但我们也值得尝试一些手动内存分配和拷贝方法，以观察其对应用程序性能的影响。
+向量加法应用程序 [stream-init-solution](init-in-streams\stream-init-solution.cu) 的最新迭代使用 `cudaMallocManaged` 命令首先分配初始化核函数在设备上使用的托管内存，然后依次分配向量加法核函数在设备上所用以及主机所用的托管内存，其中内存均采用自动传输以进行验证。这是种方法很明智，但我们也值得尝试一些手动内存分配和拷贝方法，以观察其对应用程序性能的影响。
 
-将 [01-stream-init-solution](../../../../../edit/tasks/task1/task/03_AC_STREAMS_NVVP-zh/06-stream-init/solutions/01-stream-init-solution.cu) 应用程序重构为**不**使用 `cudaMallocManaged` 命令。为此，您需要执行以下操作：
+将 `stream-init-solution` 应用程序重构为**不**使用 `cudaMallocManaged` 命令。为此，您需要执行以下操作：
 
 - 将调用 `cudaMallocManaged` 命令替换为调用 `cudaMalloc` 命令。
 - 创建将用于在主机上验证的额外向量。由于使用 `cudaMalloc` 命令分配的内存在主机上不可用，因此您必须执行此操作, 使用 `cudaMallocHost` 命令分配此主机向量。
 - 在 `addVectorsInto` 核函数运行完毕后，使用 `cudaMemcpy` 命令将包含相加结果的向量复制到使用 `cudaMallocHost` 命令创建的主机向量中。
 - 使用 `cudaFreeHost` 命令释放经由 `cudaMallocHost` 命令分配的内存。
 
-如您遇到问题，请参阅 [解决方案](../../../../../edit/tasks/task1/task/03_AC_STREAMS_NVVP-zh/07-manual-malloc/solutions/01-manual-malloc-solution.cu)。
+如您遇到问题，请参阅 [解决方案](manual-transfer-to-gpu\manual-transfer_to_gpu.cu)。
 
 
-```python
-!nvcc -arch=sm_70 -o vector-add-manual-alloc 06-stream-init/solutions/01-stream-init-solution.cu -run
+```shell
+nvcc  -o vector-add-manual-alloc init-in-streams/stream-init-solution.cu -run
 ```
 
 完成重构后，请在新的 nvvp 会话中打开可执行文件，然后使用时间轴执行以下操作：
@@ -322,17 +316,11 @@ cudaFreeHost(host_a);          // Free pinned memory like this.
 - 比较此时间轴与之前重构的时间轴，并使用时间轴标尺比较当前应用程序中 `cudaMalloc` 的运行时与先前应用程序中 `cudaMallocManaged` 的运行时。
 - 查看当前应用程序中初始化核函数的运行开始时间如何会晚于其在上次迭代中的运行时间。检查过时间轴后，您将发现时间差在于 `cudaMallocHost` 命令所用的时间。这很清楚地表明内存传输与内存拷贝的区别。正如您当前的操作，拷贝内存时，数据将存在于系统中的 2 个不同位置。与在上次迭代中仅分配 3 个向量相比，当前分配第 4 个主机向量会产生较小的性能成本。
 
----
+
 ## Using Streams to Overlap Data Transfers and Code Execution
 
-以下幻灯片将直观呈现即将发布的材料的概要信息。点击浏览一遍这些幻灯片，然后再继续深入了解以下章节中的主题。
-
-
-```python
-%%HTML
-
-<div align="center"><iframe src="https://view.officeapps.live.com/op/view.aspx?src=https://developer.download.nvidia.com/training/courses/C-AC-01-V1/AC_STREAMS_NVVP-zh/NVVP-Streams-3-zh.pptx" frameborder="0" width="900" height="550" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe></div>
-```
+`cudaMemcpyAsync`可以通过非默认流异步传输内存，此操作可以完成内存的拷贝和计算的重叠
+![示意图](img/stream3.png)
 
 除 `cudaMemcpy` 以外，只要主机内存钉固，`cudaMemcpyAsync` 便可将内存从主机异步拷贝到设备或从设备异步拷贝到主机，此操作可通过使用 `cudaMallocHost` 分配内存来完成。
 
@@ -386,13 +374,13 @@ for (int i = 0; i < numberOfSegments; ++i)
 
 ### Exercise: Overlap Kernel Execution and Memory Copy Back to Host
 
-向量加法应用程序 [01-manual-malloc-solution.cu](../../../../../edit/tasks/task1/task/03_AC_STREAMS_NVVP-zh/07-manual-malloc/solutions/01-manual-malloc-solution.cu) 的最新迭代目前正在 GPU 上执行所有向量加法操作，完成后其会将内存拷贝回主机以进行验证。
+向量加法应用程序 [overlap-transfer.cu](overlap-transfer\overlap-transfer.cu) 的最新迭代目前正在 GPU 上执行所有向量加法操作，完成后其会将内存拷贝回主机以进行验证。
 
-重构 [01-manual-malloc-solution.cu](../../../../../edit/tasks/task1/task/03_AC_STREAMS_NVVP-zh/07-manual-malloc/solutions/01-manual-malloc-solution.cu) 应用程序，使之在非默认流的 4 个程序段中执行向量加法操作，以便在等待所有向量加法工作完成之前开始异步内存拷贝。如您遇到问题，请参阅 [解决方案](../../../../../edit/tasks/task1/task/03_AC_STREAMS_NVVP-zh/08-overlap-xfer/solutions/01-overlap-xfer-solution.cu)。
+重构 `overlap-transfer.cu`应用程序，使之在非默认流的 4 个程序段中执行向量加法操作，以便在等待所有向量加法工作完成之前开始异步内存拷贝。如您遇到问题，请参阅 [解决方案](overlap-transfer\overlap-transfer-solution.cu)。
 
 
-```python
-!nvcc -arch=sm_70 -o vector-add-manual-alloc 07-manual-malloc/solutions/01-manual-malloc-solution.cu -run
+```shell
+nvcc  -o vector-add-manual-alloc overlap-transfer/overlap-transfer-solution.cu -run
 ```
 
 完成重构后，请在新的 nvvp 会话中打开可执行文件，然后使用时间轴执行以下操作：

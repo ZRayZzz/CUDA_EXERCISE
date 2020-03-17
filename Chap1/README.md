@@ -3,7 +3,7 @@
 
 
 
-## 主要内容
+## Prerequisite
 
 To get the most out of this lab you should already be able to:
 
@@ -16,7 +16,7 @@ To get the most out of this lab you should already be able to:
 
 完成学习后，应能够：
 
-- 编写、编译及运行既可调用 CPU 函数也可**启动** GPU **核函数*的 C/C++ 程序。
+- 编写、编译及运行既可调用 CPU 函数也可**启动** GPU *核函数*的 C/C++ 程序。
 - 使用**执行配置**控制并行**线程层次结构**。
 - 重构串行循环以在 GPU 上并行执行其迭代。
 - 分配和释放可用于 CPU 和 GPU 的内存。
@@ -116,12 +116,14 @@ nvcc  -o hello-gpu hello-gpu/hello-gpu.cu -run
 
 曾使用过 `gcc` 的用户会对 `nvcc` 感到非常熟悉。例如，编译 `some-CUDA.cu` 文件就很简单：
 
-`nvcc  -o out some-CUDA.cu -run`
+```shell
+nvcc  -o out some-CUDA.cu -run
+```
 
   - `nvcc` 是使用 `nvcc` 编译器的命令行命令。
   - 将 `some-CUDA.cu` 作为文件传递以进行编译。
   - `o` 标志用于指定编译程序的输出文件。
-  - `arch` 标志表示该文件必须编译为哪个**架构**类型。本示例中，`sm_70` 将用于专门针对本实验运行的 Volta GPU 进行编译，但有意深究的用户可以参阅有关 [`arch` 标志](http://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#options-for-steering-gpu-code-generation)、[虚拟架构特性] (http://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-feature-list) 和 [GPU特性](http://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-feature-list) 的文档。
+  - `arch` 标志表示该文件必须编译为哪个**架构**类型。本示例中，`sm_70` 将用于专门针对本实验运行的 Volta GPU 进行编译，但有意深究的用户可以参阅有关 [arch标志](http://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#options-for-steering-gpu-code-generation)、[虚拟架构特性](http://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-feature-list) 和 [GPU特性](http://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-feature-list) 的文档。
 
   - 为方便起见，提供 `run` 标志将执行已成功编译的二进制文件。
 
@@ -246,7 +248,7 @@ CUDA 核函数可以访问给出块中线程数的特殊变量：`blockDim.x`。
 
 
 ```shell
-nvcc  -o multo-block-loop multi-block-loop/multi-block-loop.cu -run
+nvcc  -o multi-block-loop multi-block-loop/multi-block-loop.cu -run
 ```
 
 
@@ -401,6 +403,8 @@ __global void kernel(int *a, int N)
 ```
 这样子是无法处理那些超出范围的数据。
 
+
+
 ### Exercise: Use a Grid-Stride Loop to Manipulate an Array Larger than the Grid
 
 重构 [grid-stride-double.cu](grid-stride-double\grid-stride-double.cu) 以在 `doubleElements` 核函数中使用网格跨度循环，进而使小于 `N` 的网格可以重用线程以覆盖数组中的每个元素。程序会打印数组中的每个元素是否均已加倍，而当前该程序会准确打印出 `FALSE`。如您遇到问题，请参阅 [grid-stride-double-solution.cu](grid-stride-double\grid-stride-double-solution.cu)。
@@ -409,6 +413,8 @@ __global void kernel(int *a, int N)
 ```shell
 nvcc -o grid-stride-double grid-stride-double/grid-stride-double.cu -run
 ```
+
+
 
 ## Error Handling
 
@@ -447,6 +453,7 @@ if (err != cudaSuccess)
 `cudaMallocManaged`之类的函数就不需要返回值了。主要是由上面两个函数完成错误处理。
 
 
+
 ### Exercise: Add Error Handling
 
 目前，[add-error-handling.cu](add-error-handling/add-error-handling.cu)会编译、运行并打印已加倍失败的数组元素。不过，该程序不会指明其中是否存在任何错误。重构应用程序以处理 CUDA 错误，以便您可以了解程序出现的问题并进行有效调试。您将需要调查在调用 CUDA 函数时可能出现的同步错误，以及在执行 CUDA 核函数时可能出现的异步错误。如您遇到问题，请参阅 [add-error-handling-solution.cu](add-error-handling/add-error-handling-solution.cu)。
@@ -455,6 +462,8 @@ if (err != cudaSuccess)
 ```shell
 nvcc  -o add-error-handling add-error-handling/01-add-error-handling.cu -run
 ```
+
+
 
 ### CUDA Error Handling Function
 
@@ -485,11 +494,13 @@ int main()
 }
 ```
 
+
+
 ## Summary
 
 至此，您已经完成以下列出的所有实验学习目标：
 
-- 编写、编译及运行既可调用 CPU 函数也可**启动** GPU **核函数*的 C/C++ 程序。
+- 编写、编译及运行既可调用 CPU 函数也可**启动** GPU *核函数*的 C/C++ 程序。
 - 使用**执行配置**控制并行**线程层次结构**。
 - 重构串行循环以在 GPU 上并行执行其迭代。
 - 分配和释放可用于 CPU 和 GPU 的内存。
@@ -517,9 +528,13 @@ int main()
 nvcc -o vector-add vector-add/vector-add.cu -run
 ```
 
+
+
 ## Advanced Content
 
 以下练习为时间富余且有意深究的学习者提供额外挑战。这些挑战需要使用更先进的技术加以应对，并且其提供的有用知识也很少。因此，完成这些挑战着实不易，但您在此过程中亦会收获重大进步。
+
+
 
 ## Grids and Blocks of 2 and 3 Dimensions
 
@@ -533,6 +548,8 @@ someKernel<<<number_of_blocks, threads_per_block>>>();
 
 鉴于以上示例，`someKernel` 内部的变量 `gridDim.x`、`gridDim.y`、`blockDim.x` 和 `blockDim.y` 均将等于 `16`。
 
+
+
 ### Exercise: Accelerate 2D Matrix Multiply Application
 
 文件 [matrix-multiply-2d.cu](matrix-multiply/matrix-multiply-2d.cu)包含一个功能齐全的主机函数 `matrixMulCPU`。您的任务是扩建 CUDA 核函数 `matrixMulGPU`。源代码将使用这两个函数执行矩阵乘法，并比较它们的答案以验证您编写的 CUDA 核函数是否正确。使用以下指南获得操作支持，如您遇到问题，请参阅 [matrix-multiply-2d-solution.cu](matrix-multiply/matrix-multiply-2d-solution.cu)：
@@ -544,6 +561,8 @@ someKernel<<<number_of_blocks, threads_per_block>>>();
 ```shell
 nvcc -o matrix-multiply-2d matrix-multiply-2d/matrix-multiply-2d.cu -run
 ```
+
+
 
 ### Exercise: Accelerate A Thermal Conductivity Application
 
@@ -557,3 +576,4 @@ nvcc -o heat-conduction heat-conduction/heat-conduction.cu -run
 ```
 
 > 此任务中的原始热传导 CPU 源代码取自于休斯顿大学的文章 [An OpenACC Example Code for a C-based heat conduction code](http://docplayer.net/30411068-An-openacc-example-code-for-a-c-based-heat-conduction-code.html)（基于 C 的热传导代码的 OpenACC 示例代码）。
+
